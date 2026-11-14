@@ -1,7 +1,7 @@
 {
-  "backend_url": "",
-  "updated_utc": "",
-  "expires_utc": "",
-  "note": "backend_url: written by the Kaggle studio (or paste the https://....gradio.live link by hand). contact_email: address that receives Contact-page messages.",
+  "backend_url": "https://fd7c147f9c03bdce25.gradio.live",
+  "updated_utc": "2026-11-14T08:51:29+00:00",
+  "expires_utc": "2026-11-14T20:51:29+00:00",
+  "note": "written automatically by the ASVBA Kaggle backend",
   "contact_email": ""
 }

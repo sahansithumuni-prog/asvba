@@ -585,11 +585,10 @@
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
 const MOCK = params.get("mock") === "1";
-const CLIENT_URLS = ["https://cdn.jsdelivr.net/npm/@gradio/client@1/dist/index.min.js", "https://esm.sh/@gradio/client@1"];
 const store = (s) => ({ get(k) { try { return s.getItem(k) || ""; } catch (e) { return ""; } },
                         set(k, v) { try { s.setItem(k, v); } catch (e) { } }, del(k) { try { s.removeItem(k); } catch (e) { } } });
 const LS = store(window.localStorage), SS = store(window.sessionStorage);
-const S = { url: "", source: "", cfg: null, mod: null, client: null, online: false, signed: false, busy: false, runId: "",
+const S = { url: "", source: "", cfg: null, api: null, online: false, signed: false, busy: false, runId: "",
             chars: [], char: null, avatarFile: null, scriptDone: false, confirmed: false, videoStarted: false, videoDone: false, briefAtScript: "" };
 const FORMATS = ["9x16", "16x9"];           // both formats every time (the video settings panel was removed)
 const SPEED = "quality";
@@ -610,7 +609,11 @@ function show(el, text, kind) { el.classList.remove("hidden", "ok", "bad"); if (
 function clean(md) { return String(md ?? "").replace(/\*\*/g, "").replace(/`/g, "").replace(/ {2}\n/g, "\n").replace(/[⏳✅❌]️?/gu, "").trim(); }
 function kindOf(md) { const s = String(md ?? ""); return s.includes("❌") ? "bad" : s.includes("✅") ? "ok" : ""; }
 function errText(md) { return clean(String(md ?? "").split("(details:")[0]); }
-function fileUrl(v) { if (!v) return null; if (typeof v === "string") return v; return v.video?.url || v.url || null; }
+function fileUrl(v) {
+  if (!v) return null; if (typeof v === "string") return v;
+  const f = v.video || v;
+  return f.url || (f.path ? `${S.url}/gradio_api/file=${f.path}` : null);
+}
 function fileName(v, url) { return (v && (v.video?.orig_name || v.orig_name)) || decodeURIComponent((url || "").split(/[\/=]/).pop() || "ASVBA_ad.mp4"); }
 function code() { return $("code").value.trim(); }
 function short(e) { return String(e?.message || e || "error").slice(0, 160); }
@@ -740,11 +743,60 @@ drop.addEventListener("drop", (e) => {
 });
 
 // ---------- connection ----------
-async function loadModule() {
-  if (MOCK) return mockModule();
-  let last;
-  for (const u of CLIENT_URLS) { try { return await import(u); } catch (e) { last = e; } }
-  throw new Error("could not load the connection library (" + short(last) + ")");
+// The studio (Gradio 5) HTTP API:  POST /gradio_api/call/<name> {data:[...]} -> {event_id}
+//                                   GET  /gradio_api/call/<name>/<event_id> -> stream of "event: generating|complete|error|heartbeat"
+//                                   POST /gradio_api/upload (files) -> ["<server path>"]
+async function fetchT(url, opts, ms, what) {
+  const ctl = new AbortController(); const t = setTimeout(() => ctl.abort(), ms);
+  try { return await fetch(url, { ...opts, signal: ctl.signal }); }
+  catch (e) { throw new Error(e.name === "AbortError" ? `no answer after ${Math.round(ms / 1000)} s (${what})` : `${e.message || e} (${what}; network or browser block)`); }
+  finally { clearTimeout(t); }
+}
+function restApi(base) {
+  return {
+    async upload(file) {
+      const fd = new FormData(); fd.append("files", file, file.name);
+      const r = await fetchT(`${base}/gradio_api/upload`, { method: "POST", body: fd }, 180000, "upload");
+      if (!r.ok) throw new Error(`upload failed (HTTP ${r.status})`);
+      const paths = await r.json();
+      return { path: paths[0], orig_name: file.name, size: file.size, mime_type: file.type, meta: { _type: "gradio.FileData" } };
+    },
+    async call(name, data, onData, joinMs = 30000) {
+      const r = await fetchT(`${base}/gradio_api/call/${name}`, { method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ data }) }, joinMs, name);
+      if (!r.ok) throw new Error(`${name}: the studio answered HTTP ${r.status}`);
+      const { event_id } = await r.json();
+      const res = await fetchT(`${base}/gradio_api/call/${name}/${event_id}`, {}, joinMs, name + " results");
+      if (!res.ok || !res.body) throw new Error(`${name}: results stream HTTP ${res.status}`);
+      const reader = res.body.getReader(), dec = new TextDecoder();
+      let buf = "", last = null;
+      for (;;) {
+        let timer;
+        const step = await Promise.race([reader.read(), new Promise((_, rej) => { timer = setTimeout(() => rej(new Error("the studio stopped sending updates")), 180000); })])
+          .finally(() => clearTimeout(timer));
+        if (step.done) break;
+        buf += dec.decode(step.value, { stream: true }).replace(/\r\n/g, "\n");
+        let i;
+        while ((i = buf.indexOf("\n\n")) >= 0) {
+          const chunk = buf.slice(0, i); buf = buf.slice(i + 2);
+          let ev = "message"; const lines = [];
+          for (const line of chunk.split("\n")) {
+            if (line.startsWith("event:")) ev = line.slice(6).trim();
+            else if (line.startsWith("data:")) lines.push(line.slice(5).replace(/^ /, ""));
+          }
+          const raw = lines.join("\n");
+          if (ev === "heartbeat" || !raw) continue;
+          if (ev === "error") { let m = raw; try { m = JSON.parse(raw) || "error"; } catch (e) { } reader.cancel().catch(() => {}); throw new Error(`the studio reported: ${m}`); }
+          if (ev === "generating" || ev === "complete" || ev === "message") {
+            last = JSON.parse(raw); if (onData) onData(last);
+            if (ev === "complete") { reader.cancel().catch(() => {}); return last; }
+          }
+        }
+      }
+      if (last && kindOf(last[0])) return last;
+      throw new Error("the connection closed before the result arrived");
+    },
+  };
 }
 async function loadConfig() {
   try { const r = await fetch("config.json?t=" + Date.now(), { cache: "no-store" }); if (r.ok) return await r.json(); } catch (e) { }
@@ -758,20 +810,9 @@ function pickBackend() {
   if (S.cfg?.backend_url) return [S.cfg.backend_url, "config"];
   return [MOCK ? "mock://backend" : "", ""];
 }
-async function call(endpoint, data, onData, onStatus) {
-  let last = null;
-  const job = S.client.submit(endpoint, data);
-  for await (const msg of job) {
-    if (msg.type === "data") { last = msg.data; if (onData) onData(msg.data); }
-    else if (msg.type === "status") {
-      const st = msg.status || msg;
-      if (st.stage === "error") throw new Error(st.message || "the studio stopped answering");
-      if (onStatus) onStatus(st);
-      if (st.stage === "complete") break;
-    }
-  }
-  if (!last) throw new Error("no answer from the studio");
-  return last;
+async function call(endpoint, data, onData) {
+  if (!S.api) throw new Error("not connected");
+  return S.api.call(endpoint.replace(/^\//, ""), data, onData);
 }
 function queueText(st) {
   if (st.stage === "pending" && typeof st.position === "number") return `Waiting in the queue – you are number ${st.position + 1}${st.size ? " of " + st.size : ""} …`;
@@ -787,12 +828,13 @@ async function connect() {
   const exp = S.source === "config" && S.cfg?.expires_utc ? Date.parse(S.cfg.expires_utc) : NaN;
   setServer("wait", "Connecting to the AI studio …");
   try {
-    S.mod = S.mod || await loadModule();
-    S.client = await withTimeout(S.mod.Client.connect(S.url, { events: ["data", "status"] }), 30000, "no answer");
-    const out = await withTimeout(call("/status", [code()]), 30000, "no answer");
+    S.api = MOCK ? mockApi() : restApi(S.url);
+    const out = await withTimeout(call("/status", [code()]), 45000, "no answer after 45 s (status)");
     const st = JSON.parse(out[0]);
-    const setup = Object.entries(st.setup || {}).filter(([, v]) => v !== "ready").map(([k, v]) => `${SETUP_NAMES[k] || k} ${v}`);
-    const info = (setup.length ? `Still starting: ${setup.join(", ")}. You can already write a script.` : "All parts of the studio are ready.") +
+    const failed = Object.entries(st.setup || {}).filter(([, v]) => v === "failed").map(([k]) => SETUP_NAMES[k] || k);
+    const setup = Object.entries(st.setup || {}).filter(([, v]) => v === "setting up").map(([k]) => SETUP_NAMES[k] || k);
+    const info = (setup.length ? `Still starting: ${setup.join(", ")}. You can already write a script.` : failed.length ? "" : "All parts of the studio are ready.") +
+      (failed.length ? `${setup.length ? "\n" : ""}Not available in this session: ${failed.join(", ")} – videos are still made (team: see Setup logs).` : "") +
       (st.busy ? `\nAnother ad is being made (${st.busy_min} min so far) – your request will wait its turn.` : "") +
       (st.expires_utc ? `\nThis studio session is open until ${new Date(st.expires_utc).toLocaleString([], { dateStyle: "medium", timeStyle: "short" })} at the latest.` : "");
     if (st.code_ok === false) { setServer("off", "That access code is not right", "Check the code from the ASVBA team and try again."); return false; }
@@ -850,7 +892,7 @@ $("btnScript").addEventListener("click", async () => {
   try {
     const out = await call("/generate_script", [code(), brief, null, null, null, S.char?.voice || "F1 - female voice", FORMATS, SPEED],
       (d) => { if (kindOf(d[0]) === "") { show(st, progressText(d[0], queue)); renderSteps($("steps1"), 0, 1, d[0], false); } },
-      (s) => { queue = queueText(s); if (queue) show(st, queue); });
+      );
     if (kindOf(out[0]) === "ok") {
       const w = /\((\d+) words/.exec(String(out[0]));
       show(st, `Your script is ready${w ? ` (${w[1]} words)` : ""}. Review it below.`, "ok");
@@ -927,14 +969,14 @@ async function download(url, name, btn) {
 async function pollResult(runId, el) {
   for (let i = 0; i < 720; i++) {
     try {
-      if (!S.client) await connect();
+      if (!S.api) await connect();
       const out = await call("/result", [code(), runId]);
       const k = kindOf(out[0]);
       if (k === "ok") { show(el, "Your video is ready.", "ok"); renderSteps($("steps2"), 2, 5, "", true); showResult(out); return true; }
       if (k === "bad") { show(el, errText(out[0]), "bad"); return false; }
       show(el, progressText(out[0]) + "\nThe studio is still working. This page checks again every 15 seconds.");
       renderSteps($("steps2"), 2, 5, out[0], false);
-    } catch (e) { S.client = null; show(el, `Waiting for the studio to answer … (${short(e)})`); }
+    } catch (e) { S.api = null; show(el, `Waiting for the studio to answer … (${short(e)})`); }
     await sleep(15000);
   }
   return false;
@@ -953,13 +995,15 @@ $("btnVideo").addEventListener("click", async () => {
   updateSteps();
   let queue = "";
   try {
-    const av = await avatarFile();
+    show(el, "Uploading the pictures …");
+    const av = await S.api.upload(await avatarFile());
+    const prod = $("product").files[0] ? await S.api.upload($("product").files[0]) : null;
+    const logo = $("logo").files[0] ? await S.api.upload($("logo").files[0]) : null;
+    show(el, "Making your video – Sinhala voice first, then the ambassador. Keep this page open; if it closes, come back later and choose “Show it”.");
     const out = await call("/generate_video",
-      [code(), runId, $("script").value, $("fields").value, $("reviewer").value, S.mod.handle_file(av),
-       $("product").files[0] ? S.mod.handle_file($("product").files[0]) : null, $("logo").files[0] ? S.mod.handle_file($("logo").files[0]) : null,
-       S.char.voice],
+      [code(), runId, $("script").value, $("fields").value, $("reviewer").value, av, prod, logo, S.char.voice],
       (d) => { if (kindOf(d[0]) === "") { show(el, progressText(d[0], queue)); renderSteps($("steps2"), 2, 5, d[0], false); } },
-      (s) => { queue = queueText(s); if (queue) show(el, queue); });
+      );
     if (kindOf(out[0]) === "bad") { show(el, errText(out[0]), "bad"); $("steps2").classList.add("hidden"); S.videoStarted = false; }
     else { show(el, "Your video is ready.", "ok"); renderSteps($("steps2"), 2, 5, "", true); showResult(out); }
   } catch (e) {
@@ -992,7 +1036,7 @@ $("btnUseLink").addEventListener("click", () => {
   const u = $("backend").value.trim();
   if (u && !/^https:\/\/\S+$/.test(u)) { alert("Paste the full https:// link from the studio notebook."); return; }
   if (u) SS.set("asvba_backend_override", u); else SS.del("asvba_backend_override");
-  S.client = null; connect();
+  S.api = null; connect();
 });
 $("btnEmbed").addEventListener("click", () => {
   if (!S.url || S.url.startsWith("mock")) { alert("There is no studio link yet."); return; }
@@ -1017,27 +1061,23 @@ S.cfg = MOCK ? null : await loadConfig();
 connect();
 
 // ---------- demo mode (?mock=1, access code "demo"): same calls, sample answers, no studio ----------
-function mockModule() {
+function mockApi() {
   const wait = (ms) => new Promise((r) => setTimeout(r, ms));
-  async function* run(endpoint, data) {
-    if (endpoint === "/status") {
-      yield { type: "data", data: [JSON.stringify({ online: true, code_ok: data[0] ? data[0] === "demo" : null, busy: false,
-        setup: { tts: "ready", sadtalker: "ready", latentsync: "ready" }, pipeline: "demo" })] };
-      return;
-    }
-    if (data[0] !== "demo") { yield { type: "data", data: ["❌ Wrong access code.", "", "", "", ""].slice(0, endpoint === "/generate_script" ? 5 : 3) }; return; }
-    if (endpoint === "/generate_script") {
-      yield { type: "status", stage: "pending", position: 0 };
-      for (const s of ["Llama-3-Sinhala draft", "Gemini script"]) { yield { type: "data", data: [`⏳ **${s}** – 0.1 min`, "", "", "", ""] }; await wait(600); }
-      yield { type: "data", data: ["✅ Script ready (9 words, run DEMO).", "(demo draft)", "නැවුම් ස්වාභාවික සමක් සඳහා අපේ ඖෂධීය මුහුණු සෝදනය අදම උත්සාහ කරන්න.",
-        JSON.stringify({ brand_name: "Demo brand", cta_si: "අදම උත්සාහ කරන්න" }, null, 2), "DEMO"] };
-      yield { type: "status", stage: "complete" };
-      return;
-    }
-    for (const s of ["SinhalaVITS voice", "SadTalker", "LatentSync 1.5", "Ad composer"]) { yield { type: "data", data: [`⏳ **${s}** – 0.1 min`, null, null] }; await wait(600); }
-    yield { type: "data", data: ["❌ This is the demo: no real video is made. Sign in to the AI studio with your access code to make one.", null, null] };
-  }
-  return { handle_file: (f) => f, Client: { connect: async () => ({ submit: (endpoint, data) => run(endpoint, data) }) } };
+  return {
+    async upload(file) { return { path: "/demo/" + file.name, orig_name: file.name, meta: { _type: "gradio.FileData" } }; },
+    async call(name, data, onData) {
+      if (name === "status") return [JSON.stringify({ online: true, code_ok: data[0] ? data[0] === "demo" : null, busy: false,
+        setup: { tts: "ready", sadtalker: "ready", latentsync: "ready" }, pipeline: "demo" })];
+      if (data[0] !== "demo") return ["❌ Wrong access code.", "", "", "", ""].slice(0, name === "generate_script" ? 5 : 3);
+      if (name === "generate_script") {
+        for (const s of ["Llama-3-Sinhala draft", "Gemini script"]) { onData([`⏳ **${s}** – 0.1 min`, "", "", "", ""]); await wait(600); }
+        return ["✅ Script ready (9 words, run DEMO).", "(demo draft)", "නැවුම් ස්වාභාවික සමක් සඳහා අපේ ඖෂධීය මුහුණු සෝදනය අදම උත්සාහ කරන්න.",
+          JSON.stringify({ brand_name: "Demo brand", cta_si: "අදම උත්සාහ කරන්න" }, null, 2), "DEMO"];
+      }
+      for (const s of ["SinhalaVITS voice", "SadTalker", "LatentSync 1.5", "Ad composer"]) { onData([`⏳ **${s}** – 0.1 min`, null, null]); await wait(600); }
+      return ["❌ This is the demo: no real video is made. Sign in to the AI studio with your access code to make one.", null, null];
+    },
+  };
 }
 </script>
 </body>

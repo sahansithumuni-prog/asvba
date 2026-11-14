@@ -1,0 +1,10 @@
+{
+  "note": "Preset AI-generated ambassadors. 'thumb' = picture shown on the website; 'avatar' = picture sent to the studio (SadTalker). Replace each avatar with a high-resolution AI-generated waist-up picture (about 1024 x 1024 px, face to the camera). Never use a photo of a real person.",
+  "characters": [
+    { "id": "nethmi",   "name": "Nethmi",   "gender": "female", "voice": "F1 - female voice", "thumb": "assets/characters/nethmi.jpg",   "avatar": "assets/characters/nethmi.jpg" },
+    { "id": "ravindu",  "name": "Ravindu",  "gender": "male",   "voice": "M1 - male voice",   "thumb": "assets/characters/ravindu.jpg",  "avatar": "assets/characters/ravindu.jpg" },
+    { "id": "sewwandi", "name": "Sewwandi", "gender": "female", "voice": "F2 - female voice", "thumb": "assets/characters/sewwandi.jpg", "avatar": "assets/characters/sewwandi.jpg" },
+    { "id": "dilan",    "name": "Dilan",    "gender": "male",   "voice": "M2 - male voice",   "thumb": "assets/characters/dilan.jpg",    "avatar": "assets/characters/dilan.jpg" },
+    { "id": "meesha",   "name": "Meesha",   "gender": "female", "voice": "F1 - female voice", "thumb": "assets/characters/meesha.jpg",   "avatar": "assets/characters/meesha.jpg" }
+  ]
+}

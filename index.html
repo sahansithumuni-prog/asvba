@@ -1,0 +1,1044 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ASVBA Sinhala – Virtual Brand Ambassador for Sri Lankan Brands</title>
+<meta name="description" content="Generate promotional videos with Sinhala-speaking AI brand ambassadors for Sri Lankan products and businesses.">
+<meta name="theme-color" content="#4A1FB8">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%236A2BF0'/%3E%3Cstop offset='1' stop-color='%232E6BFF'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M17 9c0-4 4-6 7-4l29 20c3 2 3 6 0 8L24 53c-3 2-7 0-7-4z' fill='url(%23g)'/%3E%3Cpath d='M9 44c6 9 18 12 26 7' stroke='%23E7B04A' stroke-width='6' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Sans+Sinhala:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#F5F3FF; --surface:#FFFFFF; --ink:#1B1464; --text:#2B2752; --muted:#625E80; --line:#E4DFFA;
+    --purple:#4A1FB8; --violet:#6A2BF0; --blue:#2E6BFF; --lilac:#EEE9FF; --sky:#E6F0FF; --cream:#FFF3DD;
+    --grad:linear-gradient(90deg,#4A1FB8 0%,#6A2BF0 45%,#2E6BFF 100%);
+    --gold:linear-gradient(90deg,#E7B04A 0%,#C88E2C 100%); --gold-1:#E7B04A; --gold-2:#B9832A;
+    --ok:#18A058; --ok-bg:#E6F6EE; --bad:#C2372C; --bad-bg:#FCEBE9; --wait-bg:#FFF4DE;
+    --shadow:0 12px 34px -12px rgba(74,31,184,.22); --r:22px; --r-sm:12px;
+    --font:"Plus Jakarta Sans","Noto Sans Sinhala",system-ui,sans-serif;
+  }
+  * { box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+  body { margin:0; font-family:var(--font); font-size:16.5px; line-height:1.6; color:var(--text); background:var(--bg);
+         background-image:radial-gradient(900px 600px at 85% -10%, rgba(106,43,240,.14), transparent 60%),
+                          radial-gradient(800px 500px at -10% 40%, rgba(46,107,255,.10), transparent 60%); background-attachment:fixed; }
+  a { color:var(--purple); }
+  img { max-width:100%; display:block; }
+  :focus-visible { outline:3px solid #9B7BFF; outline-offset:2px; border-radius:8px; }
+  .hidden { display:none !important; }
+  .wrap { max-width:1280px; margin:0 auto; padding:0 28px; }
+  [lang="si"] { line-height:1.75; }
+
+  /* ---------- header ---------- */
+  header.top { position:sticky; top:0; z-index:40; padding:0 16px; }
+  .bar { max-width:1500px; margin:0 auto; background:rgba(255,255,255,.92); backdrop-filter:blur(10px); border-radius:0 0 28px 28px;
+         box-shadow:0 8px 30px -14px rgba(74,31,184,.25); display:flex; align-items:center; gap:22px; padding:12px 28px; }
+  .logo { display:flex; align-items:center; gap:12px; text-decoration:none; color:var(--ink); }
+  .logo svg { width:46px; height:46px; flex:none; }
+  .logo b { display:block; font-size:24px; font-weight:800; letter-spacing:-.02em; line-height:1.1; }
+  .logo small { display:flex; align-items:center; gap:8px; font-size:12.5px; font-weight:600; color:var(--text); letter-spacing:.12em; }
+  .logo small::before, .logo small::after { content:""; width:20px; height:1.5px; background:var(--gold-1); }
+  .vsep { width:1px; height:40px; background:var(--line); }
+  nav.main { margin-left:auto; display:flex; gap:6px; align-items:center; }
+  nav.main a { text-decoration:none; color:var(--ink); font-weight:600; padding:9px 20px; border-radius:999px; font-size:16px; }
+  nav.main a:hover { background:#F4F1FF; }
+  nav.main a.active { background:var(--lilac); color:var(--purple); }
+  .btn { font:inherit; font-weight:700; border:0; cursor:pointer; border-radius:14px; padding:12px 22px; display:inline-flex; align-items:center;
+         justify-content:center; gap:10px; text-decoration:none; color:#fff; background:var(--grad); box-shadow:0 10px 24px -10px rgba(74,31,184,.55); }
+  .btn:hover:not(:disabled) { filter:brightness(1.08); }
+  .btn:disabled { opacity:.45; cursor:not-allowed; box-shadow:none; }
+  .btn.light { background:var(--lilac); color:var(--purple); box-shadow:none; }
+  .btn.light:hover:not(:disabled) { background:#E3DBFF; }
+  .btn.white { background:#fff; color:var(--purple); box-shadow:none; border:1.5px solid var(--line); }
+  .btn svg { width:20px; height:20px; flex:none; }
+  #btnSignIn { padding:11px 20px; }
+  #btnSignIn .sdot { width:9px; height:9px; border-radius:50%; background:#5BE39A; display:none; }
+  #btnSignIn.in .sdot { display:inline-block; }
+  .menu-btn { display:none; margin-left:auto; background:var(--lilac); border:0; border-radius:12px; width:44px; height:44px; cursor:pointer; }
+
+  /* ---------- home ---------- */
+  .hero { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.05fr); gap:24px; align-items:center; min-height:560px; padding:28px 0 10px; }
+  .badge { display:inline-flex; align-items:center; gap:10px; padding:9px 18px; border-radius:999px; background:rgba(238,233,255,.9);
+           color:var(--purple); font-weight:700; font-size:15.5px; box-shadow:0 6px 18px -10px rgba(74,31,184,.35); }
+  .badge svg { width:22px; height:22px; }
+  .hero h1 { font-size:clamp(38px,4.6vw,64px); line-height:1.08; letter-spacing:-.03em; color:var(--ink); font-weight:800; margin:26px 0 0; }
+  .goldtext { background:var(--gold); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .swoosh { display:block; width:min(330px,60%); height:14px; margin:8px 0 0 31%; }
+  .hero p.lead { font-size:clamp(18px,1.6vw,22px); color:var(--text); max-width:34ch; margin:22px 0 0; line-height:1.5; }
+  .cta-big { margin-top:34px; font-size:clamp(20px,1.8vw,26px); padding:20px 46px; border-radius:999px; }
+  .cta-big svg { width:28px; height:28px; }
+  .hero-media { position:relative; margin-right:-28px; }
+  .hero-media .img { border-radius:46% 0 0 18% / 70% 0 0 30%; overflow:hidden; box-shadow:var(--shadow); aspect-ratio:802/548; }
+  .hero-media .img img { width:100%; height:100%; object-fit:cover; }
+  .ai-note { position:absolute; left:18px; bottom:16px; background:rgba(27,20,100,.72); color:#fff; font-size:12.5px; padding:4px 12px; border-radius:999px; }
+
+  .features { display:grid; grid-template-columns:repeat(4,1fr); gap:22px; margin:34px 0 0; }
+  .fcard { background:var(--surface); border-radius:var(--r); padding:24px 26px 26px; box-shadow:var(--shadow); border-bottom:4px solid transparent;
+           border-image:none; position:relative; overflow:hidden; }
+  .fcard::after { content:""; position:absolute; left:0; right:0; bottom:0; height:4px; background:var(--grad); }
+  .fcard.b::after { background:linear-gradient(90deg,#2E6BFF,#59A2FF); } .fcard.g::after { background:var(--gold); }
+  .fhead { display:flex; gap:16px; align-items:center; }
+  .ic { width:58px; height:58px; border-radius:16px; display:grid; place-items:center; background:var(--lilac); flex:none; }
+  .ic svg { width:30px; height:30px; }
+  .ic.b { background:var(--sky); } .ic.g { background:var(--cream); }
+  .fcard h3 { margin:0; color:var(--ink); font-size:21px; line-height:1.2; font-weight:800; }
+  .fcard p { margin:16px 0 0; color:var(--text); font-size:16px; }
+
+  section.band { margin:90px 0 0; }
+  .sec-title { font-size:clamp(28px,3vw,40px); font-weight:800; color:var(--ink); letter-spacing:-.02em; margin:0; line-height:1.15; }
+  .sec-sub { color:var(--muted); font-size:18px; margin:10px 0 0; max-width:62ch; }
+  .flow { list-style:none; padding:0; margin:34px 0 0; display:grid; grid-template-columns:repeat(5,1fr); gap:16px; }
+  .flow li { background:var(--surface); border-radius:18px; padding:20px; box-shadow:var(--shadow); }
+  .flow .n { width:38px; height:38px; border-radius:50%; background:var(--grad); color:#fff; font-weight:800; display:grid; place-items:center; }
+  .flow h4 { margin:14px 0 4px; color:var(--ink); font-size:17px; }
+  .flow p { margin:0; color:var(--muted); font-size:15px; }
+  .cta-band { margin:90px 0 0; border-radius:28px; background:var(--grad); color:#fff; padding:44px 48px; display:flex; gap:24px; align-items:center;
+              justify-content:space-between; flex-wrap:wrap; box-shadow:0 20px 50px -20px rgba(74,31,184,.6); }
+  .cta-band h2 { margin:0; font-size:clamp(24px,2.4vw,32px); }
+  .cta-band p { margin:6px 0 0; opacity:.9; }
+  .cta-band .btn { background:#fff; color:var(--purple); font-size:18px; padding:15px 30px; border-radius:999px; }
+
+  /* ---------- generator ---------- */
+  .gen { display:grid; grid-template-columns:300px minmax(0,1fr); gap:28px; padding:28px 0 20px; align-items:start; }
+  .side { position:sticky; top:104px; background:rgba(255,255,255,.85); border-radius:26px; padding:22px 18px; box-shadow:var(--shadow); }
+  .side-head { display:flex; gap:14px; align-items:center; padding:0 6px 18px; }
+  .side-head .ic { width:60px; height:60px; }
+  .side-head h2 { margin:0; color:var(--ink); font-size:21px; font-weight:800; line-height:1.2; }
+  .side-head p { margin:2px 0 0; font-size:14.5px; color:var(--text); line-height:1.35; }
+  .vsteps { list-style:none; margin:0; padding:0; position:relative; }
+  .vsteps li { position:relative; display:grid; grid-template-columns:40px 1fr; gap:12px; padding:14px 12px; border-radius:18px; }
+  .vsteps li:not(:last-child)::after { content:""; position:absolute; left:31px; top:54px; bottom:-12px; width:2px; background:#D9D3F3; }
+  .vsteps .k { width:40px; height:40px; border-radius:50%; display:grid; place-items:center; font-weight:800; background:#ECEAF3; color:#57536F; position:relative; z-index:1; }
+  .vsteps b { display:block; color:var(--ink); font-size:17px; line-height:1.3; }
+  .vsteps span.d { font-size:14px; color:var(--text); line-height:1.35; }
+  .vsteps li.cur { background:linear-gradient(90deg,#EEE9FF,#F6F3FF); box-shadow:inset 0 0 0 1px #E0D8FF; }
+  .vsteps li.cur .k { background:var(--grad); color:#fff; }
+  .vsteps li.done .k { background:var(--ok); color:#fff; }
+  .tip { margin-top:18px; border-radius:18px; padding:16px 18px; background:linear-gradient(180deg,#FFF9EE,#FFFFFF); box-shadow:inset 0 0 0 1px #F3E3C3;
+         border-bottom:4px solid var(--gold-1); }
+  .tip b { display:flex; gap:8px; align-items:center; color:var(--purple); font-size:17px; }
+  .tip p { margin:6px 0 0; font-size:14.5px; color:var(--text); }
+
+  .gen-title { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:16px; align-items:center; }
+  .gen-title h1 { font-size:clamp(36px,4.2vw,56px); line-height:1.05; color:var(--ink); font-weight:800; letter-spacing:-.03em; margin:14px 0 0; }
+  .gen-title p { margin:10px 0 0; font-size:18.5px; color:var(--text); max-width:52ch; }
+  .clap { width:150px; height:130px; }
+  .studio-line { margin-top:18px; display:flex; gap:12px; align-items:center; flex-wrap:wrap; background:rgba(255,255,255,.8); border-radius:16px;
+                 padding:12px 16px; box-shadow:inset 0 0 0 1px var(--line); font-size:15px; }
+  .dot { width:11px; height:11px; border-radius:50%; background:#A9A4C4; flex:none; }
+  .dot.on { background:var(--ok); box-shadow:0 0 0 4px rgba(24,160,88,.16); }
+  .dot.busy { background:var(--gold-1); box-shadow:0 0 0 4px rgba(231,176,74,.2); }
+  .dot.wait { background:#9B8BE8; animation:pulse 1.2s infinite; }
+  .dot.off { background:#E0675B; }
+  @keyframes pulse { 50% { opacity:.35; } }
+
+  .card { background:var(--surface); border-radius:var(--r); box-shadow:var(--shadow); padding:20px 22px 22px; margin-top:20px; border:1px solid rgba(124,92,255,.10); }
+  .card-h { display:flex; gap:12px; align-items:center; flex-wrap:wrap; }
+  .card-h .ic { width:40px; height:40px; border-radius:12px; } .card-h .ic svg { width:22px; height:22px; }
+  .card-h h2 { margin:0; color:var(--ink); font-size:21px; font-weight:800; }
+  .card-h .sub { color:var(--text); font-size:15.5px; padding-left:14px; border-left:1.5px solid var(--line); }
+  textarea, input[type=text], input[type=password], input[type=url], input[type=email], select {
+    width:100%; font:inherit; font-size:16px; color:var(--text); background:#fff; border:1.5px solid #DCD6F5; border-radius:14px; padding:12px 16px; }
+  textarea { resize:vertical; line-height:1.6; }
+  textarea:focus, input:focus, select:focus { outline:none; border-color:#8C6CFF; box-shadow:0 0 0 4px rgba(106,43,240,.12); }
+  .tawrap { position:relative; margin-top:14px; }
+  #brief { padding-bottom:32px; }
+  .count { position:absolute; right:14px; bottom:10px; font-size:13.5px; color:var(--muted); background:rgba(255,255,255,.85); padding:0 4px; }
+  label.lbl { display:block; font-weight:700; font-size:15px; color:var(--ink); margin:16px 0 6px; }
+  label.lbl small, .small { font-weight:500; color:var(--muted); font-size:14px; }
+
+  .chars { display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:14px; margin-top:16px; }
+  .char { position:relative; border:0; padding:0; cursor:pointer; border-radius:18px; overflow:hidden; background:#F7F5FF; text-align:center;
+          box-shadow:inset 0 0 0 1.5px #E2DCFA; font:inherit; color:var(--ink); }
+  .char img { width:100%; aspect-ratio:1/0.92; object-fit:cover; object-position:top; }
+  .char span.nm { display:block; padding:9px 4px; font-weight:700; font-size:16px; background:#F4F1FF; }
+  .char:hover { box-shadow:inset 0 0 0 2px #B9A6FF; }
+  .char.sel { box-shadow:0 0 0 3px #7C4DFF, 0 10px 24px -8px rgba(106,43,240,.55); }
+  .char.sel span.nm { background:var(--grad); color:#fff; }
+  .char .tick { position:absolute; top:8px; right:8px; width:30px; height:30px; border-radius:50%; background:rgba(106,43,240,.9); display:none; place-items:center; }
+  .char.sel .tick { display:grid; }
+  .char .own { width:100%; aspect-ratio:1/0.92; display:grid; place-items:center; color:var(--purple); }
+  .char .own svg { width:40px; height:40px; }
+  .voice-line { margin-top:12px; font-size:14.5px; color:var(--muted); display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+  .voice-line select { width:auto; padding:8px 12px; font-size:15px; }
+
+  .up { display:grid; grid-template-columns:minmax(0,1fr) 230px; gap:18px; margin-top:16px; align-items:stretch; }
+  .drop { border:2px dashed #C9BEF5; border-radius:18px; background:#FBFAFF; display:flex; flex-direction:column; align-items:center; justify-content:center;
+          text-align:center; padding:22px; cursor:pointer; min-height:170px; }
+  .drop.over { background:#F1ECFF; border-color:#7C4DFF; }
+  .drop svg { width:46px; height:46px; }
+  .drop b { color:var(--ink); font-size:17px; margin-top:6px; }
+  .drop .small { margin-top:2px; }
+  .chip { margin-top:10px; font-size:13px; color:var(--text); background:#EFECF8; border-radius:999px; padding:3px 12px; }
+  .pview { border-radius:18px; overflow:hidden; background:#F4F1FF; display:grid; place-items:center; min-height:170px; box-shadow:inset 0 0 0 1px var(--line); }
+  .pview img { width:100%; height:100%; object-fit:contain; max-height:220px; }
+  .pview .ph { color:var(--muted); font-size:14px; padding:12px; text-align:center; }
+  .logo-row { display:flex; gap:12px; align-items:center; flex-wrap:wrap; margin-top:14px; font-size:15px; }
+  .logo-row img { height:44px; width:auto; border-radius:8px; background:#fff; box-shadow:inset 0 0 0 1px var(--line); }
+  .consent { display:grid; grid-template-columns:22px 1fr; gap:10px; align-items:start; margin-top:20px; font-size:15px; background:rgba(255,255,255,.7);
+             border-radius:16px; padding:14px 16px; box-shadow:inset 0 0 0 1px var(--line); }
+  .consent input { width:18px; height:18px; margin-top:4px; accent-color:#6A2BF0; }
+  .brief-actions { display:flex; gap:14px; align-items:center; justify-content:flex-end; flex-wrap:wrap; margin-top:14px; }
+  .brief-actions .small { margin-right:auto; }
+  .priv { margin:10px 0 0; }
+  textarea[readonly] { background:#F7F5FF; color:#3A3566; }
+  .create-row { display:flex; gap:18px; align-items:center; justify-content:flex-end; flex-wrap:wrap; margin-top:22px; }
+  .create-row .small { margin-right:auto; }
+  .btn-create { font-size:clamp(22px,2.2vw,32px); padding:18px 64px; border-radius:999px; }
+  .btn-create svg { width:30px; height:30px; }
+  .status { margin-top:14px; padding:12px 16px; border-radius:14px; background:#F4F1FF; font-size:15.5px; white-space:pre-line; color:var(--text); }
+  .status.ok { background:var(--ok-bg); color:#0F6E3B; } .status.bad { background:var(--bad-bg); color:var(--bad); }
+  .steps { list-style:none; padding:0; margin:12px 0 0; display:flex; flex-wrap:wrap; gap:8px 22px; }
+  .steps li { display:flex; gap:9px; align-items:center; font-size:15px; color:var(--muted); }
+  .steps li::before { content:""; width:16px; height:16px; border-radius:50%; border:2px solid #CFC6F2; flex:none; box-sizing:border-box; }
+  .steps li.now { color:var(--ink); font-weight:700; }
+  .steps li.now::before { border-color:#7C4DFF; border-top-color:transparent; animation:spin 1s linear infinite; }
+  .steps li.done { color:#0F6E3B; } .steps li.done::before { background:var(--ok); border-color:var(--ok); }
+  @keyframes spin { to { transform:rotate(360deg); } }
+  details > summary { cursor:pointer; color:var(--purple); font-weight:600; font-size:15px; margin-top:12px; }
+  #script { font-family:"Noto Sans Sinhala",var(--font); font-size:17px; }
+  .result { display:grid; grid-template-columns:minmax(0,340px) minmax(0,1fr); gap:26px; align-items:start; margin-top:16px; }
+  video { width:100%; max-height:600px; background:#0E0B2A; border-radius:18px; }
+  .dl { display:flex; flex-direction:column; gap:10px; margin-top:6px; }
+  .note-ai { border-left:4px solid var(--gold-1); padding:4px 0 4px 12px; color:var(--text); font-size:15px; margin:0; }
+  .banner { display:flex; gap:12px; align-items:center; flex-wrap:wrap; padding:14px 18px; background:var(--wait-bg); color:#6B4A0E; border-radius:16px; margin-top:16px; }
+
+  /* ---------- about / contact ---------- */
+  .page-head { padding:40px 0 10px; }
+  .page-head h1 { font-size:clamp(34px,4vw,52px); color:var(--ink); font-weight:800; letter-spacing:-.03em; margin:14px 0 0; line-height:1.1; }
+  .page-head p { font-size:18.5px; max-width:64ch; margin:12px 0 0; }
+  .two { display:grid; grid-template-columns:1fr 1fr; gap:22px; }
+  .about-grid { display:grid; grid-template-columns:1.2fr .8fr; gap:22px; margin-top:24px; }
+  .card h3 { color:var(--ink); margin:0 0 6px; font-size:20px; }
+  .card ul { margin:8px 0 0; padding-left:20px; } .card li { margin:6px 0; }
+  .pipe { list-style:none; padding:0; margin:14px 0 0; display:grid; gap:10px; }
+  .pipe li { display:grid; grid-template-columns:34px 1fr; gap:12px; align-items:start; }
+  .pipe .n { width:34px; height:34px; border-radius:10px; background:var(--lilac); color:var(--purple); font-weight:800; display:grid; place-items:center; }
+  .pipe b { color:var(--ink); }
+  .contact-grid { display:grid; grid-template-columns:1.1fr .9fr; gap:22px; margin-top:24px; }
+
+  footer { margin-top:90px; padding:30px 0 40px; color:var(--muted); font-size:14.5px; }
+  footer .wrap { display:flex; gap:20px; justify-content:space-between; flex-wrap:wrap; border-top:1px solid var(--line); padding-top:24px; }
+
+  /* ---------- sign-in dialog ---------- */
+  dialog { border:0; border-radius:26px; padding:0; width:min(520px,94vw); box-shadow:0 30px 80px -20px rgba(27,20,100,.5); color:var(--text); }
+  dialog::backdrop { background:rgba(27,20,100,.35); backdrop-filter:blur(3px); }
+  .dlg-h { background:var(--grad); color:#fff; padding:22px 26px; }
+  .dlg-h h2 { margin:0; font-size:24px; } .dlg-h p { margin:4px 0 0; opacity:.9; font-size:15px; }
+  .dlg-b { padding:20px 26px 24px; }
+  .srv { display:flex; gap:10px; align-items:flex-start; background:#F7F5FF; border-radius:14px; padding:12px 14px; margin-bottom:12px; }
+  .srv .dot { margin-top:7px; }
+  #srvText { font-weight:700; color:var(--ink); } #srvInfo { font-size:14px; color:var(--muted); white-space:pre-line; }
+  .row { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+  .x { position:absolute; top:14px; right:14px; background:rgba(255,255,255,.2); color:#fff; border:0; width:36px; height:36px; border-radius:50%; cursor:pointer; font-size:20px; }
+  iframe { width:100%; height:600px; border:1px solid var(--line); border-radius:12px; margin-top:10px; }
+
+  @media (max-width:1180px) {
+    .features { grid-template-columns:1fr 1fr; }
+    .flow { grid-template-columns:1fr 1fr 1fr; }
+    .chars { grid-template-columns:repeat(3,minmax(0,1fr)); }
+  }
+  @media (max-width:980px) {
+    nav.main, .vsep { display:none; }
+    nav.main.open { display:flex; position:absolute; top:76px; left:16px; right:16px; flex-direction:column; align-items:stretch; background:#fff;
+                    border-radius:20px; padding:12px; box-shadow:var(--shadow); }
+    .menu-btn { display:grid; place-items:center; }
+    .hero, .gen, .about-grid, .contact-grid, .two { grid-template-columns:1fr; }
+    .hero-media { margin-right:0; }
+    .side { position:static; }
+    .vsteps { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:6px; }
+    .vsteps li { grid-template-columns:1fr; text-align:center; justify-items:center; padding:10px 4px; }
+    .vsteps li::after, .vsteps span.d, .side .tip { display:none; }
+    .vsteps b { font-size:13px; }
+    .result { grid-template-columns:1fr; }
+  }
+  @media (max-width:640px) {
+    .wrap { padding:0 16px; } .bar { padding:10px 14px; gap:10px; }
+    .logo b { font-size:19px; } .logo svg { width:38px; height:38px; } .logo small { font-size:11px; white-space:nowrap; }
+    .logo small::before, .logo small::after { display:none; }
+    .vsteps { gap:2px; } .vsteps li { padding:8px 0; } .vsteps b { font-size:10px; letter-spacing:-.01em; overflow-wrap:normal; }
+    .side { padding:18px 12px; }
+    .card-h .sub { flex-basis:100%; border-left:0; padding-left:0; }
+    #btnSignIn span.t { display:none; }
+    .features, .flow { grid-template-columns:1fr; }
+    .chars { grid-template-columns:repeat(2,minmax(0,1fr)); }
+    .up { grid-template-columns:1fr; }
+    .clap { display:none; } .gen-title { grid-template-columns:1fr; }
+    .btn-create { width:100%; }
+    .cta-band { padding:30px 24px; }
+  }
+  @media (prefers-reduced-motion:reduce) { *,*::before,*::after { animation:none !important; transition:none !important; } html { scroll-behavior:auto; } }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="gP" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6A2BF0"/><stop offset="1" stop-color="#2E6BFF"/></linearGradient>
+    <linearGradient id="gG" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#E7B04A"/><stop offset="1" stop-color="#B9832A"/></linearGradient>
+  </defs>
+</svg>
+
+<header class="top">
+  <div class="bar">
+    <a class="logo" href="#/home" aria-label="ASVBA Sinhala home">
+      <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M17 9c0-4 4-6 7-4l29 20c3 2 3 6 0 8L24 53c-3 2-7 0-7-4z" fill="url(#gP)"/><path d="M9 44c6 9 18 12 26 7" stroke="url(#gG)" stroke-width="6" fill="none" stroke-linecap="round"/></svg>
+      <span><b>ASVBA Sinhala</b><small>Research Project</small></span>
+    </a>
+    <span class="vsep"></span>
+    <nav class="main" id="mainNav" aria-label="Main">
+      <a href="#/home" data-v="home">Home</a>
+      <a href="#/generator" data-v="generator">Generator</a>
+      <a href="#/about" data-v="about">About</a>
+      <a href="#/contact" data-v="contact">Contact</a>
+    </nav>
+    <span class="vsep"></span>
+    <button class="menu-btn" id="menuBtn" type="button" aria-label="Menu" aria-expanded="false"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#4A1FB8" stroke-width="2.2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+    <button class="btn" id="btnSignIn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4-6 8-6s7 2 8 6"/></svg><span class="sdot"></span><span class="t" id="signInText">Sign In</span></button>
+  </div>
+</header>
+
+<main>
+  <!-- ================= HOME ================= -->
+  <div class="view" id="v-home">
+    <div class="wrap">
+      <section class="hero">
+        <div>
+          <span class="badge"><svg viewBox="0 0 24 24" fill="url(#gP)" aria-hidden="true"><path d="M10 2l1.8 5.2L17 9l-5.2 1.8L10 16l-1.8-5.2L3 9l5.2-1.8zM18 13l.9 2.1 2.1.9-2.1.9L18 19l-.9-2.1L15 16l2.1-.9z"/></svg>AI-Powered Advertising Platform</span>
+          <h1>Virtual Brand Ambassador for <span class="goldtext">Sri Lankan Brands</span></h1>
+          <svg class="swoosh" viewBox="0 0 300 14" preserveAspectRatio="none" aria-hidden="true"><path d="M2 12C80 2 200 0 298 6" stroke="url(#gG)" stroke-width="4" fill="none" stroke-linecap="round"/></svg>
+          <p class="lead">Generate professional promotional videos using AI brand ambassadors for Sri Lankan products and businesses.</p>
+          <a class="btn cta-big" href="#/generator"><svg viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M7 4.5v15a1 1 0 0 0 1.5.9l12-7.5a1 1 0 0 0 0-1.8l-12-7.5A1 1 0 0 0 7 4.5z"/></svg>Create your Ad</a>
+        </div>
+        <div class="hero-media">
+          <div class="img"><img src="assets/hero.jpg" alt="An AI-generated Sri Lankan brand ambassador in a blue saree presenting skincare and food products"></div>
+          <span class="ai-note">AI-generated ambassador</span>
+        </div>
+      </section>
+
+      <div class="features">
+        <div class="fcard"><div class="fhead"><span class="ic"><svg viewBox="0 0 24 24" fill="url(#gP)" aria-hidden="true"><circle cx="9" cy="8" r="4"/><circle cx="17" cy="9" r="3"/><path d="M1.5 20c.5-4.5 3.6-7 7.5-7s7 2.5 7.5 7z"/><path d="M15 13.2c3.4-.4 6.8 1.7 7.5 6.8h-4.6c-.3-2.6-1.3-5-2.9-6.8z"/></svg></span><h3>AI Character Selection</h3></div>
+          <p>Choose from realistic, Sri Lankan AI brand ambassadors that match your brand.</p></div>
+        <div class="fcard b"><div class="fhead"><span class="ic b"><svg viewBox="0 0 24 24" fill="none" stroke="#2E6BFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="15" height="12" rx="2"/><path d="m3 14 4-4 4 4 2-2 5 5"/><circle cx="18" cy="17" r="4" fill="#2E6BFF" stroke="none"/><path d="M18 19v-4m-1.6 1.6L18 15l1.6 1.6" stroke="#fff"/></svg></span><h3>Product Upload</h3></div>
+          <p>Upload your product images, brand logo, and key details easily.</p></div>
+        <div class="fcard"><div class="fhead"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3" fill="none" stroke="url(#gP)" stroke-width="2.2"/><path d="M10 9v6l5-3z" fill="url(#gP)"/></svg></span><h3>Ad Video Generation</h3></div>
+          <p>Automatically create a professional promotional video with your selected AI ambassador.</p></div>
+        <div class="fcard g"><div class="fhead"><span class="ic g"><svg viewBox="0 0 24 24" fill="url(#gG)" aria-hidden="true"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg></span><h3>Easy Workflow</h3></div>
+          <p>A simple, step-by-step process to turn your product brief into a ready-to-post ad.</p></div>
+      </div>
+
+      <section class="band">
+        <h2 class="sec-title">How it works</h2>
+        <p class="sec-sub">From a short brief to a Sinhala video ad – and you approve the words before anything is recorded.</p>
+        <ol class="flow">
+          <li><span class="n">1</span><h4>Send your brief</h4><p>Product, price or offer, audience and what customers should do. A Sinhala script comes back.</p></li>
+          <li><span class="n">2</span><h4>Review the script</h4><p>Change any word, then confirm it with your name.</p></li>
+          <li><span class="n">3</span><h4>Pick an ambassador</h4><p>Choose one of our AI characters – the voice matches.</p></li>
+          <li><span class="n">4</span><h4>Add your product</h4><p>Upload a product photo and, if you like, your logo.</p></li>
+          <li><span class="n">5</span><h4>Create your video</h4><p>Sinhala voice, lip-sync and captions, in 9:16 and 16:9.</p></li>
+        </ol>
+      </section>
+
+      <section class="cta-band">
+        <div><h2>Ready to meet your brand ambassador?</h2><p>Every video is clearly labelled “AI-generated ambassador”.</p></div>
+        <a class="btn" href="#/generator">Create your Ad</a>
+      </section>
+    </div>
+  </div>
+
+  <!-- ================= GENERATOR ================= -->
+  <div class="view hidden" id="v-generator">
+    <div class="wrap gen">
+      <aside class="side" aria-label="Steps">
+        <div class="side-head"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="6" width="14" height="12" rx="3" fill="none" stroke="url(#gP)" stroke-width="2.2"/><path d="m16 10 6-3v10l-6-3z" fill="url(#gP)"/></svg></span>
+          <div><h2>Video Generator</h2><p>Create an ad video with an AI brand ambassador</p></div></div>
+        <ol class="vsteps" id="vsteps">
+          <li class="cur"><span class="k">1</span><div><b>Ad Brief</b><span class="d">Write your brief and generate the script</span></div></li>
+          <li><span class="k">2</span><div><b>Review Script</b><span class="d">Edit and confirm what the ambassador will say</span></div></li>
+          <li><span class="k">3</span><div><b>Select Character</b><span class="d">Choose an AI brand ambassador</span></div></li>
+          <li><span class="k">4</span><div><b>Upload Product</b><span class="d">Add your product image</span></div></li>
+          <li><span class="k">5</span><div><b>Get Video</b><span class="d">Create, watch and download your ad</span></div></li>
+        </ol>
+        <div class="tip"><b><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#E7B04A" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2V16h5v-.1c0-.8.4-1.5 1-2A6 6 0 0 0 12 3z"/></svg>Tip</b>
+          <p>Be clear and specific in your brief to get a high-quality, engaging ad video.</p></div>
+      </aside>
+
+      <div>
+        <div class="gen-title">
+          <div>
+            <span class="badge"><svg viewBox="0 0 24 24" fill="url(#gG)" aria-hidden="true"><path d="M10 2l1.8 5.2L17 9l-5.2 1.8L10 16l-1.8-5.2L3 9l5.2-1.8zM18 13l.9 2.1 2.1.9-2.1.9L18 19l-.9-2.1L15 16l2.1-.9z"/></svg>AI-Powered Ad Video Creation</span>
+            <h1>Video <span class="goldtext">Generator</span></h1>
+            <p>Create a professional AI brand ambassador advertisement for your Sri Lankan brand or product in just a few steps.</p>
+          </div>
+          <svg class="clap" viewBox="0 0 150 130" aria-hidden="true">
+            <defs><linearGradient id="clB" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7B3BF6"/><stop offset="1" stop-color="#3A5BFF"/></linearGradient></defs>
+            <ellipse cx="80" cy="96" rx="64" ry="18" fill="none" stroke="url(#gG)" stroke-width="3" opacity=".8" transform="rotate(-12 80 96)"/>
+            <rect x="26" y="46" width="98" height="70" rx="14" fill="url(#clB)"/>
+            <path d="M66 66v30l25-15z" fill="#fff" opacity=".95"/>
+            <g transform="rotate(-14 30 40)"><rect x="24" y="22" width="102" height="24" rx="6" fill="#2A1A6E"/>
+              <path d="M38 22h14l-10 24H28zM66 22h14l-10 24H56zM94 22h14l-10 24H84z" fill="#fff" opacity=".9"/></g>
+            <path d="M128 18l3 7 7 3-7 3-3 7-3-7-7-3 7-3z" fill="#E7B04A"/>
+          </svg>
+        </div>
+
+        <div class="studio-line" id="studioLine">
+          <span id="lineDot" class="dot wait"></span><span id="lineText" style="flex:1">Checking the AI studio …</span>
+          <button class="btn light" id="btnLineSignIn" type="button">Sign In</button>
+        </div>
+        <div id="lastRunBanner" class="banner hidden">
+          <span id="lastRunText" style="flex:1"></span>
+          <button class="btn light" id="btnLastRun" type="button">Show it</button>
+          <button class="btn white" id="btnForget" type="button">Dismiss</button>
+        </div>
+
+        <section class="card" id="formCard">
+          <div class="card-h"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="url(#gP)" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="3"/><path d="M8 8h8M8 12h8M8 16h5"/></svg></span>
+            <h2>Ad Brief</h2><span class="sub">Enter your brief for the advertisement</span></div>
+          <div class="tawrap">
+            <textarea id="brief" rows="5" maxlength="500" aria-label="Ad brief" placeholder="e.g., Promote a new herbal face wash by a Sri Lankan natural skincare brand. Price Rs. 1,250. Made with neem and aloe vera, keeps the skin clear and fresh in Sri Lankan weather. Friendly and trustworthy. Ask viewers to try it today. 30 seconds."></textarea>
+            <span class="count" id="briefCount">0 / 500</span>
+          </div>
+          <p class="small priv">Please don’t include confidential or personal information – the brief is processed by Google Gemini.</p>
+          <div class="brief-actions">
+            <span class="small" id="step1Hint">Sign in with your access code to generate the script.</span>
+            <button class="btn" id="btnScript" type="button" disabled style="border-radius:999px;padding:13px 26px;font-size:17px"><svg viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M10 2l1.8 5.2L17 9l-5.2 1.8L10 16l-1.8-5.2L3 9l5.2-1.8zM18 13l.9 2.1 2.1.9-2.1.9L18 19l-.9-2.1L15 16l2.1-.9z"/></svg>Generate Script</button>
+          </div>
+          <div id="scriptStatus" class="status hidden" aria-live="polite"></div>
+          <ul id="steps1" class="steps hidden"></ul>
+          <p class="small hidden" id="briefChanged" style="color:#8A5A0B;margin:10px 0 0">You changed the brief. Click Generate Script again to update the script.</p>
+        </section>
+
+        <section class="card hidden" id="reviewCard">
+          <div class="card-h"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="url(#gP)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></span>
+            <h2>Review Script</h2><span class="sub">Edit the script if needed, then confirm it</span></div>
+          <p class="small" style="margin:12px 0 0">This is exactly what the ambassador will say. Write prices and numbers in Sinhala words and avoid English letters.</p>
+          <textarea id="script" rows="7" lang="si" style="margin-top:10px" aria-label="Script"></textarea>
+          <details><summary>First draft, for reference</summary><textarea id="draft" rows="5" readonly lang="si" style="margin-top:8px"></textarea></details>
+          <details><summary>On-screen text (advanced)</summary><textarea id="fields" rows="10" spellcheck="false" style="margin-top:8px"></textarea></details>
+          <label class="lbl" for="reviewer">Reviewed by <small>– your name</small></label>
+          <input id="reviewer" type="text" autocomplete="name" style="max-width:420px">
+          <div class="create-row" style="justify-content:flex-start">
+            <button class="btn" id="btnConfirm" type="button" style="font-size:17px;padding:13px 28px;border-radius:999px">Confirm Script</button>
+            <button class="btn white hidden" id="btnEditScript" type="button" style="border-radius:999px">Edit again</button>
+            <span class="small" id="runLabel"></span>
+          </div>
+          <div id="confirmStatus" class="status hidden" aria-live="polite"></div>
+        </section>
+
+        <section class="card">
+          <div class="card-h"><span class="ic"><svg viewBox="0 0 24 24" fill="url(#gP)" aria-hidden="true"><circle cx="9" cy="8" r="4"/><circle cx="17" cy="9" r="3"/><path d="M1.5 20c.5-4.5 3.6-7 7.5-7s7 2.5 7.5 7z"/><path d="M15 13.2c3.4-.4 6.8 1.7 7.5 6.8h-4.6c-.3-2.6-1.3-5-2.9-6.8z"/></svg></span>
+            <h2>Select Character</h2><span class="sub">The final video will use the selected character.</span></div>
+          <div class="chars" id="charGrid" role="radiogroup" aria-label="AI brand ambassadors"></div>
+          <input id="avatar" type="file" accept="image/png,image/jpeg,image/webp" class="hidden" aria-label="Your own AI avatar">
+          <div class="voice-line" id="voiceLine"></div>
+        </section>
+
+        <section class="card">
+          <div class="card-h"><span class="ic b"><svg viewBox="0 0 24 24" fill="none" stroke="#2E6BFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="2"/><path d="m21 16-5-5-9 9"/></svg></span>
+            <h2>Upload Product Image</h2><span class="sub">Add the product you want to feature in the ad</span></div>
+          <div class="up">
+            <label class="drop" id="drop" for="product">
+              <svg viewBox="0 0 24 24" fill="none" stroke="url(#gP)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 16l-4-4-4 4M12 12v9"/><path d="M20.4 18.4A5 5 0 0 0 18 9h-1.3A8 8 0 1 0 3 16.3"/></svg>
+              <b>Upload Product Image</b><span class="small">Drag and drop an image here, or click to browse</span>
+              <span class="chip">JPG, PNG, or WebP &nbsp;|&nbsp; Max 10 MB</span>
+            </label>
+            <input id="product" type="file" accept="image/png,image/jpeg,image/webp" class="hidden">
+            <div class="pview" id="productBox"><span class="ph">Your product photo will appear here</span><img id="productPrev" class="hidden" alt="Product preview"></div>
+          </div>
+          <div class="logo-row">
+            <label class="btn white" for="logo" style="padding:9px 16px;font-size:15px">Add brand logo <span class="small">(optional)</span></label>
+            <input id="logo" type="file" accept="image/png,image/jpeg,image/webp" class="hidden">
+            <img id="logoPrev" class="hidden" alt="Logo preview">
+          </div>
+        </section>
+
+        <label class="consent"><input type="checkbox" id="consent">
+          <span>I confirm that I may use this brand material, that only AI-generated ambassadors are used (no photos of real people), and that I will keep the “AI-generated ambassador” label when I publish the video.</span></label>
+
+        <div class="create-row">
+          <span class="small" id="createHint">Generate and confirm the script first.</span>
+          <button class="btn btn-create" id="btnVideo" type="button" disabled><svg viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M7 4.5v15a1 1 0 0 0 1.5.9l12-7.5a1 1 0 0 0 0-1.8l-12-7.5A1 1 0 0 0 7 4.5z"/></svg>Create</button>
+        </div>
+        <div id="videoStatus" class="status hidden" aria-live="polite"></div>
+        <ul id="steps2" class="steps hidden"></ul>
+
+        <section class="card hidden" id="resultCard">
+          <div class="card-h"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3" fill="none" stroke="url(#gP)" stroke-width="2.2"/><path d="M10 9v6l5-3z" fill="url(#gP)"/></svg></span>
+            <h2>Your Video</h2><span class="sub">Ready to download</span></div>
+          <div class="result">
+            <video id="video" controls playsinline preload="metadata"></video>
+            <div>
+              <p class="note-ai">The video carries the label “AI-generated ambassador”. Keep it when you publish.</p>
+              <div class="dl" id="downloads"></div>
+              <p class="small" id="resultTime" style="margin-top:12px"></p>
+              <details id="notesBox" class="hidden"><summary>Notes from the studio</summary><p class="small" id="resultNote" style="white-space:pre-line"></p></details>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= ABOUT ================= -->
+  <div class="view hidden" id="v-about">
+    <div class="wrap">
+      <div class="page-head">
+        <span class="badge">About the project</span>
+        <h1>A Hybrid AI-Driven Framework for Localized Sinhala Virtual Brand Ambassadors</h1>
+        <p>ASVBA Sinhala is a research prototype that generates Sinhala-speaking AI brand ambassadors for digital marketing campaigns in Sri Lanka, using audio-visual synthesis.</p>
+      </div>
+      <div class="about-grid">
+        <div class="card">
+          <h3>How a video is made</h3>
+          <ol class="pipe">
+            <li><span class="n">1</span><div><b>Sinhala draft</b> – a Sinhala language model (Llama-3-Sinhala) writes a first draft from your brief.</div></li>
+            <li><span class="n">2</span><div><b>Script polishing</b> – Google Gemini turns the draft into a spoken Sinhala script and the on-screen text.</div></li>
+            <li><span class="n">3</span><div><b>Human approval</b> – you read, correct and approve the script with your name.</div></li>
+            <li><span class="n">4</span><div><b>Sinhala voice</b> – SinhalaVITS speaks the approved script.</div></li>
+            <li><span class="n">5</span><div><b>Talking ambassador</b> – SadTalker animates the character and LatentSync 1.5 refines the lip movement.</div></li>
+            <li><span class="n">6</span><div><b>Ad composer</b> – product photo, logo, Sinhala captions and the AI label are added in 9:16 and 16:9.</div></li>
+          </ol>
+        </div>
+        <div>
+          <div class="card" style="margin-top:0">
+            <h3>Responsible AI</h3>
+            <ul>
+              <li>Every ambassador is AI-generated, and every video says so.</li>
+              <li>No voice or video is made before a person approves the script.</li>
+              <li>Only brand material the user is allowed to use.</li>
+              <li>Briefs are processed with Google Gemini – no confidential or personal data.</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>The research</h3>
+            <p style="margin:0">ICT 4166 Research Project, Group 04<br>University of Sri Jayewardenepura</p>
+            <!-- Team members and supervisor can be added here -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= CONTACT ================= -->
+  <div class="view hidden" id="v-contact">
+    <div class="wrap">
+      <div class="page-head">
+        <span class="badge">Contact</span>
+        <h1>Get in touch</h1>
+        <p>Ask for an access code, talk to us about a brand pilot, or send a question about the research.</p>
+      </div>
+      <div class="contact-grid">
+        <form class="card" id="contactForm" style="margin-top:0">
+          <div class="two">
+            <div><label class="lbl" for="cName">Name</label><input id="cName" type="text" required autocomplete="name"></div>
+            <div><label class="lbl" for="cOrg">Brand or organisation</label><input id="cOrg" type="text" autocomplete="organization"></div>
+          </div>
+          <label class="lbl" for="cTopic">Topic</label>
+          <select id="cTopic"><option>Access code for the generator</option><option>Brand pilot / partnership</option><option>Question about the research</option></select>
+          <label class="lbl" for="cMsg">Message</label>
+          <textarea id="cMsg" rows="5" required></textarea>
+          <div class="create-row" style="justify-content:flex-start"><button class="btn" type="submit" style="border-radius:999px;padding:14px 28px">Write the email</button>
+            <span class="small" id="cHint">Opens your email app with the message ready to send.</span></div>
+        </form>
+        <div class="card" style="margin-top:0">
+          <h3>What happens next</h3>
+          <ul>
+            <li>Access codes are given to brands that take part in our trials.</li>
+            <li>The generator works during scheduled studio sessions.</li>
+            <li>Please don’t send confidential business information by email.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer><div class="wrap"><span>© ASVBA Sinhala – Research Project, ICT 4166 Group 04, University of Sri Jayewardenepura</span><span>All ambassadors are AI-generated.</span></div></footer>
+
+<!-- ================= SIGN-IN DIALOG ================= -->
+<dialog id="signinModal" aria-labelledby="dlgTitle">
+  <div class="dlg-h" style="position:relative"><h2 id="dlgTitle">Sign In</h2><p>Enter the access code you received from the ASVBA team.</p>
+    <button class="x" id="btnCloseDlg" type="button" aria-label="Close">×</button></div>
+  <div class="dlg-b">
+    <div class="srv"><span id="srvDot" class="dot wait"></span><div><div id="srvText" role="status" aria-live="polite">Checking the AI studio …</div><div id="srvInfo"></div></div></div>
+    <label class="lbl" for="code">Access code</label>
+    <input id="code" type="password" autocomplete="off" placeholder="Access code">
+    <label class="row small" style="margin-top:10px;font-weight:500"><input type="checkbox" id="remember" style="accent-color:#6A2BF0"> Remember on this device</label>
+    <div class="row" style="margin-top:16px">
+      <button class="btn" id="btnConnect" type="button" style="border-radius:999px;padding:12px 28px">Sign In</button>
+      <button class="btn white" id="btnSignOut" type="button" style="border-radius:999px">Sign out</button>
+    </div>
+    <details id="teamBox"><summary>Studio settings (team only)</summary>
+      <p class="small" style="margin:8px 0 0">The studio link normally comes from <code>config.json</code>. Paste a link here only to override it in this browser tab.</p>
+      <div class="row" style="margin-top:8px"><input id="backend" type="url" placeholder="https://xxxxxxxx.gradio.live" style="flex:1;min-width:200px">
+        <button class="btn light" id="btnUseLink" type="button">Use</button></div>
+      <div class="row" style="margin-top:8px"><a id="openApp" target="_blank" rel="noopener" class="btn light hidden">Open studio app</a>
+        <button class="btn light" id="btnEmbed" type="button">Show studio app here</button></div>
+      <iframe id="embed" class="hidden" title="Studio app"></iframe>
+    </details>
+  </div>
+</dialog>
+
+<script type="module">
+const $ = (id) => document.getElementById(id);
+const params = new URLSearchParams(location.search);
+const MOCK = params.get("mock") === "1";
+const CLIENT_URLS = ["https://cdn.jsdelivr.net/npm/@gradio/client@1/dist/index.min.js", "https://esm.sh/@gradio/client@1"];
+const store = (s) => ({ get(k) { try { return s.getItem(k) || ""; } catch (e) { return ""; } },
+                        set(k, v) { try { s.setItem(k, v); } catch (e) { } }, del(k) { try { s.removeItem(k); } catch (e) { } } });
+const LS = store(window.localStorage), SS = store(window.sessionStorage);
+const S = { url: "", source: "", cfg: null, mod: null, client: null, online: false, signed: false, busy: false, runId: "",
+            chars: [], char: null, avatarFile: null, scriptDone: false, confirmed: false, videoStarted: false, videoDone: false, briefAtScript: "" };
+const FORMATS = ["9x16", "16x9"];           // both formats every time (the video settings panel was removed)
+const SPEED = "quality";
+const STAGES = [["Llama-3-Sinhala draft", "Writing a Sinhala draft"], ["Gemini script", "Polishing the script"],
+  ["SinhalaVITS voice", "Recording the Sinhala voice"], ["SadTalker", "Animating the ambassador"], ["LatentSync 1.5", "Syncing the lips"],
+  ["Ad composer", "Building your ad"]];
+const SETUP_NAMES = { tts: "voice", sadtalker: "animation", latentsync: "lip-sync" };
+const VOICE_LABEL = { "F1 - female voice": "Female voice 1", "F2 - female voice": "Female voice 2", "M1 - male voice": "Male voice 1", "M2 - male voice": "Male voice 2" };
+const DEFAULT_CHARS = [
+  { id: "nethmi", name: "Nethmi", voice: "F1 - female voice", thumb: "assets/characters/nethmi.jpg", avatar: "assets/characters/nethmi.jpg" },
+  { id: "ravindu", name: "Ravindu", voice: "M1 - male voice", thumb: "assets/characters/ravindu.jpg", avatar: "assets/characters/ravindu.jpg" },
+  { id: "sewwandi", name: "Sewwandi", voice: "F2 - female voice", thumb: "assets/characters/sewwandi.jpg", avatar: "assets/characters/sewwandi.jpg" },
+  { id: "dilan", name: "Dilan", voice: "M2 - male voice", thumb: "assets/characters/dilan.jpg", avatar: "assets/characters/dilan.jpg" },
+  { id: "meesha", name: "Meesha", voice: "F1 - female voice", thumb: "assets/characters/meesha.jpg", avatar: "assets/characters/meesha.jpg" }];
+
+// ---------- helpers ----------
+function show(el, text, kind) { el.classList.remove("hidden", "ok", "bad"); if (kind) el.classList.add(kind); el.textContent = text; }
+function clean(md) { return String(md ?? "").replace(/\*\*/g, "").replace(/`/g, "").replace(/ {2}\n/g, "\n").replace(/[⏳✅❌]️?/gu, "").trim(); }
+function kindOf(md) { const s = String(md ?? ""); return s.includes("❌") ? "bad" : s.includes("✅") ? "ok" : ""; }
+function errText(md) { return clean(String(md ?? "").split("(details:")[0]); }
+function fileUrl(v) { if (!v) return null; if (typeof v === "string") return v; return v.video?.url || v.url || null; }
+function fileName(v, url) { return (v && (v.video?.orig_name || v.orig_name)) || decodeURIComponent((url || "").split(/[\/=]/).pop() || "ASVBA_ad.mp4"); }
+function code() { return $("code").value.trim(); }
+function short(e) { return String(e?.message || e || "error").slice(0, 160); }
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+function withTimeout(p, ms, msg) { return Promise.race([p, new Promise((_, rej) => setTimeout(() => rej(new Error(msg)), ms))]); }
+const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
+// ---------- pages ----------
+function route() {
+  const v = (location.hash.replace(/^#\/?/, "") || "home").split("?")[0];
+  const view = ["home", "generator", "about", "contact"].includes(v) ? v : "home";
+  document.querySelectorAll(".view").forEach((el) => el.classList.toggle("hidden", el.id !== "v-" + view));
+  document.querySelectorAll("nav.main a").forEach((a) => a.classList.toggle("active", a.dataset.v === view));
+  $("mainNav").classList.remove("open"); $("menuBtn").setAttribute("aria-expanded", "false");
+  document.title = { home: "ASVBA Sinhala – Virtual Brand Ambassador for Sri Lankan Brands", generator: "Video Generator – ASVBA Sinhala",
+    about: "About – ASVBA Sinhala", contact: "Contact – ASVBA Sinhala" }[view];
+  window.scrollTo(0, 0);
+}
+window.addEventListener("hashchange", route);
+$("menuBtn").addEventListener("click", () => { const o = $("mainNav").classList.toggle("open"); $("menuBtn").setAttribute("aria-expanded", String(o)); });
+
+// ---------- studio status (dialog + generator line + header button) ----------
+function setServer(state, text, info = "") {
+  $("srvDot").className = "dot " + state; $("srvText").textContent = text; $("srvInfo").textContent = info;
+  $("lineDot").className = "dot " + state;
+  $("lineText").textContent = S.signed ? (state === "busy" ? "Signed in – the AI studio is busy, your request will wait its turn." : "Signed in – the AI studio is online.")
+    : ({ off: "The AI studio is offline. ", wait: "Checking the AI studio … ", busy: "The AI studio is online. ", on: "The AI studio is online. " }[state] || "") +
+      (state === "off" ? "Studio sessions run at scheduled times." : "Sign in with your access code to create videos.");
+  $("btnLineSignIn").classList.toggle("hidden", S.signed);
+  $("btnSignIn").classList.toggle("in", S.signed); $("signInText").textContent = S.signed ? "Signed In" : "Sign In";
+  $("btnSignOut").classList.toggle("hidden", !S.signed);
+}
+function canStart() {
+  $("btnScript").disabled = !(S.online && !S.busy);
+  $("step1Hint").textContent = S.online ? (S.busy ? "Working …" : "") : "Sign in with your access code to generate the script.";
+  $("btnVideo").disabled = !(S.online && !S.busy && S.confirmed);
+  $("createHint").textContent = !S.online ? "Sign in with your access code first." : S.busy ? "Working …" :
+    !S.scriptDone ? "Generate and confirm the script first." : !S.confirmed ? "Confirm the script first." : "";
+}
+function openSignIn() { if (!$("signinModal").open) $("signinModal").showModal(); setTimeout(() => $("code").focus(), 50); }
+$("btnSignIn").addEventListener("click", openSignIn);
+$("btnLineSignIn").addEventListener("click", openSignIn);
+$("btnCloseDlg").addEventListener("click", () => $("signinModal").close());
+$("btnSignOut").addEventListener("click", () => {
+  $("code").value = ""; SS.del("asvba_code"); LS.del("asvba_code"); S.signed = false; S.online = false; canStart(); connect();
+});
+
+// ---------- sidebar steps ----------
+function updateSteps() {
+  // 1 brief -> script, 2 review + confirm, 3 character, 4 product (optional), 5 video
+  const charOk = !!(S.char && (S.char.id !== "own" || S.avatarFile));
+  const done = [S.scriptDone, S.confirmed, S.confirmed && charOk, S.confirmed && (!!$("product").files[0] || S.videoStarted), S.videoDone];
+  let cur = done.findIndex((d) => !d);
+  if (S.videoStarted && !S.videoDone) cur = 4;
+  if (S.videoDone) cur = -1;
+  [...$("vsteps").children].forEach((li, i) => { li.className = i === cur ? "cur" : (done[i] ? "done" : ""); });
+}
+$("brief").addEventListener("input", () => {
+  $("briefCount").textContent = `${$("brief").value.length} / 500`;
+  $("briefChanged").classList.toggle("hidden", !(S.scriptDone && $("brief").value.trim() !== S.briefAtScript));
+});
+
+// ---------- characters ----------
+async function loadChars() {
+  try { const r = await fetch("assets/characters.json?t=" + Date.now(), { cache: "no-store" }); if (r.ok) { const j = await r.json(); if (j.characters?.length) return j.characters; } } catch (e) { }
+  return DEFAULT_CHARS;
+}
+function renderChars() {
+  const g = $("charGrid"); g.innerHTML = "";
+  const tick = '<span class="tick"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>';
+  for (const c of S.chars) {
+    const b = document.createElement("button"); b.type = "button"; b.className = "char"; b.setAttribute("role", "radio"); b.dataset.id = c.id;
+    b.innerHTML = `<img src="${esc(c.thumb)}" alt="${esc(c.name)}, AI-generated ambassador" loading="lazy">${tick}<span class="nm">${esc(c.name)}</span>`;
+    b.addEventListener("click", () => selectChar(c.id)); g.appendChild(b);
+  }
+  const own = document.createElement("button"); own.type = "button"; own.className = "char"; own.dataset.id = "own"; own.setAttribute("role", "radio");
+  own.innerHTML = `<span class="own" id="ownPic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="9" r="4"/><path d="M4 21c1-4 4-6 8-6"/><path d="M18 14v6M15 17h6"/></svg></span>${tick}<span class="nm">Your own</span>`;
+  own.addEventListener("click", () => $("avatar").click()); g.appendChild(own);
+  selectChar(SS.get("asvba_char") || S.chars[0]?.id);
+}
+function selectChar(id) {
+  if (id === "own" && !S.avatarFile) id = S.chars[0]?.id;
+  S.char = id === "own" ? { id: "own", name: "your own avatar", voice: $("voice")?.value || "F1 - female voice" } : S.chars.find((c) => c.id === id) || S.chars[0];
+  if (S.char.id !== "own") SS.set("asvba_char", S.char.id);
+  document.querySelectorAll(".char").forEach((b) => { const on = b.dataset.id === S.char.id; b.classList.toggle("sel", on); b.setAttribute("aria-checked", String(on)); });
+  const vl = $("voiceLine");
+  if (S.char.id === "own") {
+    vl.innerHTML = `Voice for your avatar: <select id="voice">${Object.entries(VOICE_LABEL).map(([v, l]) => `<option value="${v}">${l}</option>`).join("")}</select>`;
+    $("voice").value = S.char.voice; $("voice").addEventListener("change", () => { S.char.voice = $("voice").value; });
+  } else {
+    vl.innerHTML = `Voice: <b>${esc(VOICE_LABEL[S.char.voice] || S.char.voice)}</b> (matches ${esc(S.char.name)}). The ambassador speaks Sinhala.`;
+  }
+  updateSteps();
+}
+$("avatar").addEventListener("change", () => {
+  const f = $("avatar").files[0];
+  if (f && f.size > 10 * 1024 * 1024) { alert("This image is larger than 10 MB. Please choose a smaller PNG or JPG."); $("avatar").value = ""; return; }
+  if (!f) return;
+  S.avatarFile = f;
+  $("ownPic").innerHTML = `<img src="${URL.createObjectURL(f)}" alt="Your AI avatar" style="width:100%;height:100%;object-fit:cover">`;
+  selectChar("own");
+});
+async function avatarFile() {
+  if (S.char.id === "own") return S.avatarFile;
+  const r = await fetch(S.char.avatar); if (!r.ok) throw new Error("the picture of " + S.char.name + " could not be loaded");
+  const b = await r.blob(); return new File([b], S.char.id + "." + ((b.type.split("/")[1] || "jpg").replace("jpeg", "jpg")), { type: b.type || "image/jpeg" });
+}
+
+// ---------- product + logo ----------
+function bindImage(inp, prev, after) {
+  $(inp).addEventListener("change", () => {
+    const f = $(inp).files[0];
+    if (f && f.size > 10 * 1024 * 1024) { alert("This image is larger than 10 MB. Please choose a smaller PNG or JPG."); $(inp).value = ""; }
+    const g = $(inp).files[0];
+    if (g) { $(prev).src = URL.createObjectURL(g); $(prev).classList.remove("hidden"); } else { $(prev).classList.add("hidden"); }
+    if (after) after(!!g); updateSteps();
+  });
+}
+bindImage("product", "productPrev", (has) => { document.querySelector("#productBox .ph").classList.toggle("hidden", has); });
+bindImage("logo", "logoPrev");
+const drop = $("drop");
+["dragenter", "dragover"].forEach((t) => drop.addEventListener(t, (e) => { e.preventDefault(); drop.classList.add("over"); }));
+["dragleave", "drop"].forEach((t) => drop.addEventListener(t, (e) => { e.preventDefault(); drop.classList.remove("over"); }));
+drop.addEventListener("drop", (e) => {
+  const f = e.dataTransfer.files[0]; if (!f || !/^image\//.test(f.type)) return;
+  const dt = new DataTransfer(); dt.items.add(f); $("product").files = dt.files; $("product").dispatchEvent(new Event("change"));
+});
+
+// ---------- connection ----------
+async function loadModule() {
+  if (MOCK) return mockModule();
+  let last;
+  for (const u of CLIENT_URLS) { try { return await import(u); } catch (e) { last = e; } }
+  throw new Error("could not load the connection library (" + short(last) + ")");
+}
+async function loadConfig() {
+  try { const r = await fetch("config.json?t=" + Date.now(), { cache: "no-store" }); if (r.ok) return await r.json(); } catch (e) { }
+  return null;
+}
+function pickBackend() {
+  const p = (params.get("backend") || "").trim();
+  if (p) return [p, "link"];
+  const team = SS.get("asvba_backend_override");
+  if (team) return [team, "team"];
+  if (S.cfg?.backend_url) return [S.cfg.backend_url, "config"];
+  return [MOCK ? "mock://backend" : "", ""];
+}
+async function call(endpoint, data, onData, onStatus) {
+  let last = null;
+  const job = S.client.submit(endpoint, data);
+  for await (const msg of job) {
+    if (msg.type === "data") { last = msg.data; if (onData) onData(msg.data); }
+    else if (msg.type === "status") {
+      const st = msg.status || msg;
+      if (st.stage === "error") throw new Error(st.message || "the studio stopped answering");
+      if (onStatus) onStatus(st);
+      if (st.stage === "complete") break;
+    }
+  }
+  if (!last) throw new Error("no answer from the studio");
+  return last;
+}
+function queueText(st) {
+  if (st.stage === "pending" && typeof st.position === "number") return `Waiting in the queue – you are number ${st.position + 1}${st.size ? " of " + st.size : ""} …`;
+  return "";
+}
+async function connect() {
+  [S.url, S.source] = pickBackend();
+  S.url = (S.url || "").replace(/\/+$/, "");
+  $("backend").value = S.source === "config" ? "" : (S.url.startsWith("mock") ? "" : S.url);
+  if (S.url && !S.url.startsWith("mock")) { $("openApp").href = S.url; $("openApp").classList.remove("hidden"); }
+  S.online = false; S.signed = false; canStart();
+  if (!S.url) { setServer("off", "The AI studio is offline", "Studio sessions run at scheduled times. Please contact the ASVBA team."); return false; }
+  const exp = S.source === "config" && S.cfg?.expires_utc ? Date.parse(S.cfg.expires_utc) : NaN;
+  setServer("wait", "Connecting to the AI studio …");
+  try {
+    S.mod = S.mod || await loadModule();
+    S.client = await withTimeout(S.mod.Client.connect(S.url, { events: ["data", "status"] }), 30000, "no answer");
+    const out = await withTimeout(call("/status", [code()]), 30000, "no answer");
+    const st = JSON.parse(out[0]);
+    const setup = Object.entries(st.setup || {}).filter(([, v]) => v !== "ready").map(([k, v]) => `${SETUP_NAMES[k] || k} ${v}`);
+    const info = (setup.length ? `Still starting: ${setup.join(", ")}. You can already write a script.` : "All parts of the studio are ready.") +
+      (st.busy ? `\nAnother ad is being made (${st.busy_min} min so far) – your request will wait its turn.` : "") +
+      (st.expires_utc ? `\nThis studio session is open until ${new Date(st.expires_utc).toLocaleString([], { dateStyle: "medium", timeStyle: "short" })} at the latest.` : "");
+    if (st.code_ok === false) { setServer("off", "That access code is not right", "Check the code from the ASVBA team and try again."); return false; }
+    if (st.code_ok === null) { setServer("busy", "The AI studio is online – enter your access code", info); return false; }
+    S.online = true; S.signed = true;
+    if ($("remember").checked) LS.set("asvba_code", code()); else LS.del("asvba_code");
+    SS.set("asvba_code", code());
+    setServer(st.busy ? "busy" : "on", st.busy ? "Signed in – the studio is busy" : "Signed in – the studio is online", info);
+    canStart(); checkLastRun();
+    if ($("signinModal").open) setTimeout(() => { if (S.signed) $("signinModal").close(); }, 900);
+    return true;
+  } catch (e) {
+    const ended = !isNaN(exp) && exp < Date.now();
+    setServer("off", "The AI studio is offline",
+      (ended ? "The last studio session has ended. " : `The studio did not answer (${short(e)}). `) + "Please try again later or contact the ASVBA team.");
+    return false;
+  }
+}
+
+// ---------- progress text ----------
+function renderSteps(ul, from, to, md, finished) {
+  const m = /\*\*(.+?)\*\*/.exec(String(md ?? ""));
+  const cur = m ? STAGES.findIndex((s) => s[0] === m[1]) : -1;
+  ul.innerHTML = "";
+  for (let i = from; i <= to; i++) {
+    const li = document.createElement("li"); li.textContent = STAGES[i][1];
+    if (finished || (cur >= 0 && i < cur)) li.className = "done"; else if (i === cur) li.className = "now";
+    ul.appendChild(li);
+  }
+  ul.classList.remove("hidden");
+}
+function progressText(md, queue) {
+  const raw = String(md ?? "");
+  const m = /\*\*(.+?)\*\*\s*–\s*([\d.]+)\s*min/.exec(raw);
+  const stage = m ? (STAGES.find((s) => s[0] === m[1]) || [, m[1]])[1] : "";
+  const head = m ? `${stage} … (${m[2]} min so far)` : clean(raw).split("\n")[0];
+  return head + (queue ? `\n${queue}` : "");
+}
+
+// ---------- step 1: send the brief -> script ----------
+function lockScript(locked) {
+  for (const id of ["script", "fields", "reviewer"]) $(id).readOnly = locked;
+  $("btnConfirm").classList.toggle("hidden", locked); $("btnEditScript").classList.toggle("hidden", !locked);
+}
+$("btnScript").addEventListener("click", async () => {
+  if (S.busy) return;
+  const brief = $("brief").value.trim();
+  const st = $("scriptStatus");
+  if (brief.length < 15) return show(st, "Write the ad brief first – at least one full sentence.", "bad");
+  S.busy = true; S.scriptDone = false; S.confirmed = false; S.videoStarted = false; S.videoDone = false; canStart();
+  $("reviewCard").classList.add("hidden"); $("resultCard").classList.add("hidden"); $("videoStatus").classList.add("hidden");
+  $("steps2").classList.add("hidden"); $("briefChanged").classList.add("hidden"); updateSteps();
+  show(st, "Sending your brief … the first script of a session can take a few minutes.");
+  let queue = "";
+  try {
+    const out = await call("/generate_script", [code(), brief, null, null, null, S.char?.voice || "F1 - female voice", FORMATS, SPEED],
+      (d) => { if (kindOf(d[0]) === "") { show(st, progressText(d[0], queue)); renderSteps($("steps1"), 0, 1, d[0], false); } },
+      (s) => { queue = queueText(s); if (queue) show(st, queue); });
+    if (kindOf(out[0]) === "ok") {
+      const w = /\((\d+) words/.exec(String(out[0]));
+      show(st, `Your script is ready${w ? ` (${w[1]} words)` : ""}. Review it below.`, "ok");
+      renderSteps($("steps1"), 0, 1, "", true);
+      $("draft").value = out[1]; $("script").value = out[2]; $("fields").value = out[3]; S.runId = out[4];
+      S.scriptDone = true; S.briefAtScript = brief; lockScript(false); $("confirmStatus").classList.add("hidden");
+      $("runLabel").textContent = S.runId ? `Reference ${S.runId}` : "";
+      $("reviewCard").classList.remove("hidden"); $("reviewCard").scrollIntoView({ behavior: "smooth", block: "start" });
+    } else { show(st, errText(out[0]), "bad"); $("steps1").classList.add("hidden"); }
+  } catch (e) {
+    show(st, `Something went wrong: ${short(e)}. Sign in again and retry.`, "bad");
+  } finally { S.busy = false; canStart(); updateSteps(); }
+});
+
+// ---------- review: edit + confirm (human approval) ----------
+function scriptProblems(text) {
+  const msgs = [], t = text.replace(/\s+/g, " ").trim();
+  if (t.split(" ").filter(Boolean).length < 5) msgs.push("the script is too short");
+  const bad = [...new Set(t.match(/[A-Za-z0-9]+/g) || [])];
+  if (bad.length) msgs.push("write these in Sinhala words or remove them: " + bad.slice(0, 12).join(", "));
+  return msgs;
+}
+$("btnConfirm").addEventListener("click", () => {
+  const el = $("confirmStatus");
+  if (!$("reviewer").value.trim()) return show(el, "Write your name in “Reviewed by”.", "bad");
+  const probs = scriptProblems($("script").value);
+  if (probs.length) return show(el, "Fix the script: " + probs.join("; ") + ".", "bad");
+  try { const f = $("fields").value.trim(); if (f && typeof JSON.parse(f) !== "object") throw 0; }
+  catch (e) { return show(el, "The on-screen text is not valid JSON. Undo your change there, or fix the quotes and commas.", "bad"); }
+  S.confirmed = true; lockScript(true);
+  show(el, `Script confirmed by ${$("reviewer").value.trim()}. Now choose the character and add the product image, then click Create.`, "ok");
+  canStart(); updateSteps();
+  document.querySelector("#charGrid").closest(".card").scrollIntoView({ behavior: "smooth", block: "start" });
+});
+$("btnEditScript").addEventListener("click", () => {
+  if (S.busy) return;
+  S.confirmed = false; lockScript(false); $("confirmStatus").classList.add("hidden"); canStart(); updateSteps(); $("script").focus();
+});
+
+// ---------- step 2: video ----------
+function showResult(out) {
+  const url = fileUrl(out[1]);
+  if (!url) return false;
+  S.videoDone = true;
+  $("video").src = url; $("resultCard").classList.remove("hidden");
+  $("downloads").innerHTML = "";
+  const files = (out[2] && out[2].length) ? out[2] : [out[1]];
+  for (const fd of files) {
+    const u = fileUrl(fd); if (!u) continue;
+    const name = fileName(fd, u);
+    const b = document.createElement("button"); b.type = "button"; b.className = "btn";
+    b.style.borderRadius = "999px";
+    b.textContent = name.includes("16x9") ? "Download 16:9 – YouTube" : name.includes("9x16") ? "Download 9:16 – Reels / Shorts" : "Download video";
+    b.addEventListener("click", () => download(u, name, b));
+    $("downloads").appendChild(b);
+  }
+  const t = /Done in ([\d.]+) min/.exec(String(out[0]));
+  $("resultTime").textContent = t ? `Made in ${t[1]} minutes.` : "";
+  const notes = String(out[0]).split("\n").filter((l) => l.includes("⚠")).map((l) => l.replace(/⚠️?/u, "").trim());
+  $("resultNote").textContent = notes.length ? "Please watch the video before publishing.\n" + notes.join("\n") : "";
+  $("notesBox").classList.toggle("hidden", !notes.length);
+  updateSteps(); $("resultCard").scrollIntoView({ behavior: "smooth", block: "start" });
+  return true;
+}
+async function download(url, name, btn) {
+  const label = btn.textContent; btn.disabled = true; btn.textContent = "Downloading …";
+  try {
+    const r = await fetch(url); if (!r.ok) throw new Error(r.status);
+    const a = document.createElement("a"); a.href = URL.createObjectURL(await r.blob()); a.download = name;
+    document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 60000);
+  } catch (e) { window.open(url, "_blank", "noopener"); }
+  finally { btn.disabled = false; btn.textContent = label; }
+}
+async function pollResult(runId, el) {
+  for (let i = 0; i < 720; i++) {
+    try {
+      if (!S.client) await connect();
+      const out = await call("/result", [code(), runId]);
+      const k = kindOf(out[0]);
+      if (k === "ok") { show(el, "Your video is ready.", "ok"); renderSteps($("steps2"), 2, 5, "", true); showResult(out); return true; }
+      if (k === "bad") { show(el, errText(out[0]), "bad"); return false; }
+      show(el, progressText(out[0]) + "\nThe studio is still working. This page checks again every 15 seconds.");
+      renderSteps($("steps2"), 2, 5, out[0], false);
+    } catch (e) { S.client = null; show(el, `Waiting for the studio to answer … (${short(e)})`); }
+    await sleep(15000);
+  }
+  return false;
+}
+$("btnVideo").addEventListener("click", async () => {
+  if (S.busy) return;
+  const el = $("videoStatus");
+  if (!S.online) return show(el, "You are not signed in. Sign in with your access code first.", "bad");
+  if (!S.confirmed) return show(el, "Confirm the script first.", "bad");
+  if (!S.char || (S.char.id === "own" && !S.avatarFile)) return show(el, "Select a character first.", "bad");
+  if (!$("consent").checked) return show(el, "Tick the confirmation box to continue.", "bad");
+  S.busy = true; S.videoDone = false; S.videoStarted = true; canStart(); $("resultCard").classList.add("hidden");
+  const runId = S.runId;
+  LS.set("asvba_last_run", JSON.stringify({ run: runId, url: S.url, t: Date.now() }));
+  show(el, "Making your video – Sinhala voice first, then the ambassador. Keep this page open; if it closes, come back later and choose “Show it”.");
+  updateSteps();
+  let queue = "";
+  try {
+    const av = await avatarFile();
+    const out = await call("/generate_video",
+      [code(), runId, $("script").value, $("fields").value, $("reviewer").value, S.mod.handle_file(av),
+       $("product").files[0] ? S.mod.handle_file($("product").files[0]) : null, $("logo").files[0] ? S.mod.handle_file($("logo").files[0]) : null,
+       S.char.voice],
+      (d) => { if (kindOf(d[0]) === "") { show(el, progressText(d[0], queue)); renderSteps($("steps2"), 2, 5, d[0], false); } },
+      (s) => { queue = queueText(s); if (queue) show(el, queue); });
+    if (kindOf(out[0]) === "bad") { show(el, errText(out[0]), "bad"); $("steps2").classList.add("hidden"); S.videoStarted = false; }
+    else { show(el, "Your video is ready.", "ok"); renderSteps($("steps2"), 2, 5, "", true); showResult(out); }
+  } catch (e) {
+    show(el, `The connection was interrupted (${short(e)}). Your video is still being made – checking …`);
+    await pollResult(runId, el);
+  } finally { S.busy = false; canStart(); updateSteps(); }
+});
+
+// ---------- come back later ----------
+function checkLastRun() {
+  let last = null; try { last = JSON.parse(LS.get("asvba_last_run") || "null"); } catch (e) { }
+  if (!last || last.url !== S.url || !$("resultCard").classList.contains("hidden") || S.busy) { $("lastRunBanner").classList.add("hidden"); return; }
+  $("lastRunText").textContent = `You asked for a video on ${new Date(last.t).toLocaleString([], { dateStyle: "medium", timeStyle: "short" })}. See if it is ready.`;
+  $("lastRunBanner").classList.remove("hidden");
+}
+$("btnLastRun").addEventListener("click", async () => {
+  let last = null; try { last = JSON.parse(LS.get("asvba_last_run") || "null"); } catch (e) { }
+  if (!last) return;
+  $("lastRunBanner").classList.add("hidden");
+  S.videoStarted = true; updateSteps();
+  S.busy = true; canStart();
+  try { await pollResult(last.run, $("videoStatus")); } finally { S.busy = false; canStart(); updateSteps(); }
+});
+$("btnForget").addEventListener("click", () => { LS.del("asvba_last_run"); $("lastRunBanner").classList.add("hidden"); });
+
+// ---------- sign-in dialog ----------
+$("btnConnect").addEventListener("click", connect);
+$("code").addEventListener("keydown", (e) => { if (e.key === "Enter") connect(); });
+$("btnUseLink").addEventListener("click", () => {
+  const u = $("backend").value.trim();
+  if (u && !/^https:\/\/\S+$/.test(u)) { alert("Paste the full https:// link from the studio notebook."); return; }
+  if (u) SS.set("asvba_backend_override", u); else SS.del("asvba_backend_override");
+  S.client = null; connect();
+});
+$("btnEmbed").addEventListener("click", () => {
+  if (!S.url || S.url.startsWith("mock")) { alert("There is no studio link yet."); return; }
+  $("embed").src = S.url; $("embed").classList.remove("hidden");
+});
+
+// ---------- contact ----------
+$("contactForm").addEventListener("submit", (e) => {
+  e.preventDefault();
+  const to = (S.cfg?.contact_email || "").trim();
+  if (!to) { $("cHint").textContent = "The contact address is not set up yet. Please contact the ASVBA team directly."; return; }
+  const body = `Name: ${$("cName").value}\nBrand / organisation: ${$("cOrg").value}\n\n${$("cMsg").value}`;
+  location.href = `mailto:${encodeURIComponent(to)}?subject=${encodeURIComponent("ASVBA Sinhala – " + $("cTopic").value)}&body=${encodeURIComponent(body)}`;
+});
+
+// ---------- start ----------
+route();
+$("code").value = SS.get("asvba_code") || LS.get("asvba_code");
+$("remember").checked = !!LS.get("asvba_code");
+S.chars = await loadChars(); renderChars();
+S.cfg = MOCK ? null : await loadConfig();
+connect();
+
+// ---------- demo mode (?mock=1, access code "demo"): same calls, sample answers, no studio ----------
+function mockModule() {
+  const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+  async function* run(endpoint, data) {
+    if (endpoint === "/status") {
+      yield { type: "data", data: [JSON.stringify({ online: true, code_ok: data[0] ? data[0] === "demo" : null, busy: false,
+        setup: { tts: "ready", sadtalker: "ready", latentsync: "ready" }, pipeline: "demo" })] };
+      return;
+    }
+    if (data[0] !== "demo") { yield { type: "data", data: ["❌ Wrong access code.", "", "", "", ""].slice(0, endpoint === "/generate_script" ? 5 : 3) }; return; }
+    if (endpoint === "/generate_script") {
+      yield { type: "status", stage: "pending", position: 0 };
+      for (const s of ["Llama-3-Sinhala draft", "Gemini script"]) { yield { type: "data", data: [`⏳ **${s}** – 0.1 min`, "", "", "", ""] }; await wait(600); }
+      yield { type: "data", data: ["✅ Script ready (9 words, run DEMO).", "(demo draft)", "නැවුම් ස්වාභාවික සමක් සඳහා අපේ ඖෂධීය මුහුණු සෝදනය අදම උත්සාහ කරන්න.",
+        JSON.stringify({ brand_name: "Demo brand", cta_si: "අදම උත්සාහ කරන්න" }, null, 2), "DEMO"] };
+      yield { type: "status", stage: "complete" };
+      return;
+    }
+    for (const s of ["SinhalaVITS voice", "SadTalker", "LatentSync 1.5", "Ad composer"]) { yield { type: "data", data: [`⏳ **${s}** – 0.1 min`, null, null] }; await wait(600); }
+    yield { type: "data", data: ["❌ This is the demo: no real video is made. Sign in to the AI studio with your access code to make one.", null, null] };
+  }
+  return { handle_file: (f) => f, Client: { connect: async () => ({ submit: (endpoint, data) => run(endpoint, data) }) } };
+}
+</script>
+</body>
+</html>

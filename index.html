@@ -385,6 +385,7 @@
 
         <div class="studio-line" id="studioLine">
           <span id="lineDot" class="dot wait"></span><span id="lineText" style="flex:1">Checking the AI studio …</span>
+          <a class="btn hidden" id="btnOpenStudio" href="#">Open the AI studio</a>
           <button class="btn light" id="btnLineSignIn" type="button">Sign In</button>
         </div>
         <div id="lastRunBanner" class="banner hidden">
@@ -585,6 +586,7 @@
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
 const MOCK = params.get("mock") === "1";
+const SAME = /^\/asvba(\/|$)/.test(location.pathname);   // this copy is served by the studio itself (same address, nothing to block)
 const store = (s) => ({ get(k) { try { return s.getItem(k) || ""; } catch (e) { return ""; } },
                         set(k, v) { try { s.setItem(k, v); } catch (e) { } }, del(k) { try { s.removeItem(k); } catch (e) { } } });
 const LS = store(window.localStorage), SS = store(window.sessionStorage);
@@ -622,11 +624,14 @@ function withTimeout(p, ms, msg) { return Promise.race([p, new Promise((_, rej) 
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 
 // ---------- pages ----------
+function studioUrl() { return `${S.url}/asvba/#/generator`; }
+function goStudio() { if (S.blocked && !SAME && S.url) location.href = studioUrl(); }
 function route() {
   const v = (location.hash.replace(/^#\/?/, "") || "home").split("?")[0];
   const view = ["home", "generator", "about", "contact"].includes(v) ? v : "home";
   document.querySelectorAll(".view").forEach((el) => el.classList.toggle("hidden", el.id !== "v-" + view));
   document.querySelectorAll("nav.main a").forEach((a) => a.classList.toggle("active", a.dataset.v === view));
+  if (view === "generator") goStudio();
   $("mainNav").classList.remove("open"); $("menuBtn").setAttribute("aria-expanded", "false");
   document.title = { home: "ASVBA Sinhala – Virtual Brand Ambassador for Sri Lankan Brands", generator: "Video Generator – ASVBA Sinhala",
     about: "About – ASVBA Sinhala", contact: "Contact – ASVBA Sinhala" }[view];
@@ -765,7 +770,9 @@ function restApi(base) {
       const r = await fetchT(`${base}/gradio_api/call/${name}`, { method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ data }) }, joinMs, name);
       if (!r.ok) throw new Error(`${name}: the studio answered HTTP ${r.status}`);
-      const { event_id } = await r.json();
+      let event_id = null;
+      try { ({ event_id } = await r.json()); } catch (e) { }
+      if (!event_id) throw new Error(`${name}: unexpected answer from the studio (no event id)`);
       const res = await fetchT(`${base}/gradio_api/call/${name}/${event_id}`, {}, joinMs, name + " results");
       if (!res.ok || !res.body) throw new Error(`${name}: results stream HTTP ${res.status}`);
       const reader = res.body.getReader(), dec = new TextDecoder();
@@ -803,6 +810,7 @@ async function loadConfig() {
   return null;
 }
 function pickBackend() {
+  if (SAME) return [location.origin, "same"];
   const p = (params.get("backend") || "").trim();
   if (p) return [p, "link"];
   const team = SS.get("asvba_backend_override");
@@ -823,7 +831,7 @@ async function connect() {
   S.url = (S.url || "").replace(/\/+$/, "");
   $("backend").value = S.source === "config" ? "" : (S.url.startsWith("mock") ? "" : S.url);
   if (S.url && !S.url.startsWith("mock")) { $("openApp").href = S.url; $("openApp").classList.remove("hidden"); }
-  S.online = false; S.signed = false; canStart();
+  S.online = false; S.signed = false; S.blocked = false; $("btnOpenStudio").classList.add("hidden"); canStart();
   if (!S.url) { setServer("off", "The AI studio is offline", "Studio sessions run at scheduled times. Please contact the ASVBA team."); return false; }
   const exp = S.source === "config" && S.cfg?.expires_utc ? Date.parse(S.cfg.expires_utc) : NaN;
   setServer("wait", "Connecting to the AI studio …");
@@ -836,6 +844,7 @@ async function connect() {
     const info = (setup.length ? `Still starting: ${setup.join(", ")}. You can already write a script.` : failed.length ? "" : "All parts of the studio are ready.") +
       (failed.length ? `${setup.length ? "\n" : ""}Not available in this session: ${failed.join(", ")} – videos are still made (team: see Setup logs).` : "") +
       (st.busy ? `\nAnother ad is being made (${st.busy_min} min so far) – your request will wait its turn.` : "") +
+      (st.selftest?.passed ? `\nChecked at start: a test advert went through every step${String(st.selftest.talking_head || "").startsWith("C1") ? " (lip-sync off – face animation only)" : ""}.` : "") +
       (st.expires_utc ? `\nThis studio session is open until ${new Date(st.expires_utc).toLocaleString([], { dateStyle: "medium", timeStyle: "short" })} at the latest.` : "");
     if (st.code_ok === false) { setServer("off", "That access code is not right", "Check the code from the ASVBA team and try again."); return false; }
     if (st.code_ok === null) { setServer("busy", "The AI studio is online – enter your access code", info); return false; }
@@ -847,6 +856,19 @@ async function connect() {
     if ($("signinModal").open) setTimeout(() => { if (S.signed) $("signinModal").close(); }, 900);
     return true;
   } catch (e) {
+    if (!SAME && !MOCK && /Failed to fetch|network or browser block|NetworkError|Load failed/i.test(String(e?.message || e))) {
+      // the studio may be online but this browser refuses cross-site calls -> use the copy served by the studio itself
+      const reachable = await fetchT(`${S.url}/config`, { mode: "no-cors" }, 15000, "reachability").then(() => true).catch(() => false);
+      if (reachable) {
+        S.blocked = true;
+        setServer("busy", "The AI studio is online – it opens on its own address",
+          "Your browser does not allow this page to talk to the studio directly, so the generator opens on the studio’s address.");
+        $("btnOpenStudio").href = studioUrl(); $("btnOpenStudio").classList.remove("hidden"); $("btnLineSignIn").classList.add("hidden");
+        $("lineText").textContent = "The AI studio is online. Click “Open the AI studio” – the generator opens on the studio’s own address.";
+        if (!$("v-generator").classList.contains("hidden")) setTimeout(goStudio, 1200);
+        return false;
+      }
+    }
     const ended = !isNaN(exp) && exp < Date.now();
     setServer("off", "The AI studio is offline",
       (ended ? "The last studio session has ended. " : `The studio did not answer (${short(e)}). `) + "Please try again later or contact the ASVBA team.");
